@@ -238,7 +238,7 @@ public final class RunBerlinScenario {
 				TransformationFactory.DHDN_GK4,
 				"SCHLUESSEL",
 				"home",
-				"10", // TODO: scaling factor, should be 10 for 10pct scenario and 100 for 1pct scenario
+				"100", // TODO: scaling factor, should be 10 for 10pct scenario and 100 for 1pct scenario
 				"null", // visualizationScriptInputDirectory
 				modesString
 		};
