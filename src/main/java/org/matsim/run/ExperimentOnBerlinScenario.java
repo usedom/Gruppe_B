@@ -30,12 +30,12 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.math3.ml.neuralnet.Network;
 import org.apache.log4j.Logger;
 import org.matsim.analysis.RunPersonTripAnalysis;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
+import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.contrib.drt.routing.DrtRoute;
 import org.matsim.contrib.drt.routing.DrtRouteFactory;
@@ -47,11 +47,13 @@ import org.matsim.core.config.groups.QSimConfigGroup.TrafficDynamics;
 import org.matsim.core.config.groups.VspExperimentalConfigGroup;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
+import org.matsim.core.controler.OutputDirectoryHierarchy;
 import org.matsim.core.controler.OutputDirectoryLogging;
 import org.matsim.core.gbl.Gbl;
 import org.matsim.core.gbl.MatsimRandom;
 import org.matsim.core.network.NetworkUtils;
 import org.matsim.core.network.io.MatsimNetworkReader;
+import org.matsim.core.network.io.NetworkWriter;
 import org.matsim.core.population.routes.RouteFactories;
 import org.matsim.core.router.AnalysisMainModeIdentifier;
 import org.matsim.core.scenario.ScenarioUtils;
@@ -82,7 +84,49 @@ public final class ExperimentOnBerlinScenario {
             args = new String[] {"scenarios/berlin-v5.5-1pct/input/berlin-v5.5-1pct.config.xml"}  ;
         }
 
+
+
+       /* File outputfile = new File("cloned-berlin-matsim.xml.gz");
+        try{
+            URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
+
+            FileUtils.copyURLToFile(url,outputfile);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        String inputFile = "cloned-berlin-matsim.xml.gz";
+        String outputFile = "modified-cloned-berlin-matsim.xml.gz";
+
+        Network network = NetworkUtils.createNetwork();
+        new MatsimNetworkReader(network).readFile(inputFile);
+
+        network.getLinks().get(Id.createLinkId("54738")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("57458")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("49528")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("132668")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("2942")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("50779")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("48093")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("68519")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("141526")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("86406")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("70094")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("112640")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("5198")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("152474")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("152091")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("113237")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("126333")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("97508")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("96172")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("96171")).setNumberOfLanes(2);
+        network.getLinks().get(Id.createLinkId("57167")).setNumberOfLanes(2);
+
+        new NetworkWriter(network).write(outputFile);*/
+
         Config config = prepareConfig( args ) ;
+        config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
+
         Scenario scenario = prepareScenario( config ) ;
         Controler controler = prepareControler( scenario ) ;
         controler.run() ;
@@ -127,6 +171,7 @@ public final class ExperimentOnBerlinScenario {
                 bind(RaptorIntermodalAccessEgress.class).to(BerlinRaptorIntermodalAccessEgress.class);
             }
         } );
+
 
         return controler;
     }
