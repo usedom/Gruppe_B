@@ -44,27 +44,36 @@ public class ModifyBerlinKMA {
         Network network = NetworkUtils.createNetwork();
         new MatsimNetworkReader(network).readFile(inputFile);
 
-        network.getLinks().get(Id.createLinkId("54738")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("57458")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("49528")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("132668")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("2942")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("50779")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("48093")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("68519")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("141526")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("86406")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("70094")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("112640")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("5198")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("152474")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("152091")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("113237")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("126333")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("97508")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("96172")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("96171")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("57167")).setNumberOfLanes(2);
+        int[] links = {54738,49528,132668,2942,50779,48093,68519,141526,86406,70094,112640,5198,152474,
+        152091, 113237,126333,97508,96172,96171,57167, 52938,113580,57059,69132,57062,69223,94781,
+        113244,30224,50381,89327,59654,99708};
+
+        for (int i:links
+             ) {
+            network.getLinks().get(Id.createLinkId(Integer.toString(i))).setCapacity(0);
+            network.getLinks().get(Id.createLinkId(Integer.toString(i))).setNumberOfLanes(2);
+        }
+
+    /*    network.getLinks().get(Id.createLinkId("54738")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("49528")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("132668")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("2942")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("50779")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("48093")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("68519")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("141526")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("86406")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("70094")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("112640")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("5198")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("152474")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("152091")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("113237")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("126333")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("97508")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("96172")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("96171")).setCapacity(0);
+        network.getLinks().get(Id.createLinkId("57167")).setCapacity(0);*/
 
         new NetworkWriter(network).write(outputFile);
     }
