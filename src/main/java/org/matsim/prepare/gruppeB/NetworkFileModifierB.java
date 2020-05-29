@@ -2,26 +2,18 @@ package org.matsim.prepare.gruppeB;
 
 import org.apache.commons.io.FileUtils;
 import org.matsim.api.core.v01.Id;
-import org.matsim.api.core.v01.Scenario;
-import org.matsim.api.core.v01.TransportMode;
-import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.network.Network;
-import org.matsim.contrib.bicycle.BicycleUtils;
-import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.network.NetworkUtils;
 import org.matsim.core.network.io.MatsimNetworkReader;
 import org.matsim.core.network.io.NetworkWriter;
-import org.matsim.core.scenario.ScenarioUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
 
-public class NetworkFileModifier {
+public class NetworkFileModifierB {
 
-    public static void main(String[] args) {
+    public void modnetwork() {
         File inputFile = new File("scenarios/berlin-v5.5-1pct/input/berlin-matsim-v5.5-network.xml.gz");
         try{
             URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
@@ -47,7 +39,7 @@ public class NetworkFileModifier {
         }
 
 
-        String outputFile = "scenarios/berlin-v5.5-1pct/berlin-gruppeB/input/berlin-matsim-v5.5-network-gruppeB.xml.gz";
+        String outputFile = "scenarios/berlin-v5.5-1pct/input/modified-cloned-berlin-matsim.xml.gz";
         new NetworkWriter(network).write(outputFile);
     }
 }

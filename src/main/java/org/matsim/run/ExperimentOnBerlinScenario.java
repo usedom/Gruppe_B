@@ -19,23 +19,13 @@
 
 package org.matsim.run;
 
-import static org.matsim.core.config.groups.ControlerConfigGroup.RoutingAlgorithmType.FastAStarLandmarks;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Random;
-
-import org.apache.commons.io.FileUtils;
+import ch.sbb.matsim.routing.pt.raptor.RaptorIntermodalAccessEgress;
+import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptorModule;
 import org.apache.log4j.Logger;
 import org.matsim.analysis.RunPersonTripAnalysis;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
-import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.contrib.drt.routing.DrtRoute;
 import org.matsim.contrib.drt.routing.DrtRouteFactory;
@@ -51,20 +41,22 @@ import org.matsim.core.controler.OutputDirectoryHierarchy;
 import org.matsim.core.controler.OutputDirectoryLogging;
 import org.matsim.core.gbl.Gbl;
 import org.matsim.core.gbl.MatsimRandom;
-import org.matsim.core.network.NetworkUtils;
-import org.matsim.core.network.io.MatsimNetworkReader;
-import org.matsim.core.network.io.NetworkWriter;
 import org.matsim.core.population.routes.RouteFactories;
 import org.matsim.core.router.AnalysisMainModeIdentifier;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.geometry.transformations.TransformationFactory;
+import org.matsim.prepare.gruppeB.NetworkFileModifierB;
 import org.matsim.run.drt.OpenBerlinIntermodalPtDrtRouterModeIdentifier;
 import org.matsim.run.drt.RunDrtOpenBerlinScenario;
 import org.matsim.run.singleTripStrategies.ChangeSingleTripModeAndRoute;
 import org.matsim.run.singleTripStrategies.RandomSingleTripReRoute;
 
-import ch.sbb.matsim.routing.pt.raptor.RaptorIntermodalAccessEgress;
-import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptorModule;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Random;
+
+import static org.matsim.core.config.groups.ControlerConfigGroup.RoutingAlgorithmType.FastAStarLandmarks;
 
 /**
  * @author ikaddoura
@@ -83,78 +75,14 @@ public final class ExperimentOnBerlinScenario {
         if ( args.length==0 ) {
             args = new String[] {"scenarios/berlin-v5.5-1pct/input/berlin-v5.5-1pct.config.xml"}  ;
         }
-        //trying to get network
-        /*
-        File outputfile = new File("network-berlin-test.xml.gz");
-        try{
-            URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
 
-            FileUtils.copyURLToFile(url,outputfile);
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        config.network().setInputFile(outputfile.getPath());
-        */
-
-
-       File local_inputfile = new File("scenarios/berlin-v5.5-1pct/input/newnetwork/network-cloned-berlin-matsim.xml.gz");
-        try{
-            URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
-
-            FileUtils.copyURLToFile(url,local_inputfile);
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-
-        String inputFile = "scenarios/berlin-v5.5-1pct/input/newnetwork/network-cloned-berlin-matsim.xml.gz";
-        String outputFile = "scenarios/berlin-v5.5-1pct/input/newnetwork/modified-cloned-berlin-matsim.xml.gz";
-
-        Network network = NetworkUtils.createNetwork();
-        new MatsimNetworkReader(network).readFile(inputFile);
-
-        int[] links = {54738,49528,132668,2942,50779,48093,68519,141526,86406,70094,112640,5198,152474,
-                152091, 113237,126333,97508,96172,96171,57167, 52938,113580,57059,69132,57062,69223,94781,
-                113244,30224,50381,89327,59654,99708};
-
-        for (int i:links
-        ) {
-            //network.getLinks().get(Id.createLinkId(Integer.toString(i))).setCapacity(0);
-            network.getLinks().get(Id.createLinkId(Integer.toString(i))).setNumberOfLanes(2);
-        }
-
-        /*
-        network.getLinks().get(Id.createLinkId("54738")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("57458")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("49528")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("132668")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("2942")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("50779")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("48093")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("68519")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("141526")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("86406")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("70094")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("112640")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("5198")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("152474")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("152091")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("113237")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("126333")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("97508")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("96172")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("96171")).setNumberOfLanes(2);
-        network.getLinks().get(Id.createLinkId("57167")).setNumberOfLanes(2);
-
-         */
-
-        new NetworkWriter(network).write(outputFile);
+        NetworkFileModifierB    ;
 
         Config config = prepareConfig( args ) ;
         config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
 
-        String config_outputfile = "./newnetwork/modified-cloned-berlin-matsim.xml.gz";
-
-        config.network().setInputFile(config_outputfile);
+        String modified_network = "./modified-cloned-berlin-matsim.xml.gz";
+        config.network().setInputFile(modified_network);
 
         Scenario scenario = prepareScenario( config ) ;
         Controler controler = prepareControler( scenario ) ;
