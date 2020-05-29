@@ -97,7 +97,7 @@ public final class ExperimentOnBerlinScenario {
         */
 
 
-       File local_inputfile = new File("scenarios/berlin-v5.5-1pct/input/network-cloned-berlin-matsim.xml.gz");
+       File local_inputfile = new File("scenarios/berlin-v5.5-1pct/input/newnetwork/network-cloned-berlin-matsim.xml.gz");
         try{
             URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
 
@@ -106,8 +106,8 @@ public final class ExperimentOnBerlinScenario {
             e.printStackTrace();
         }
 
-        String inputFile = "network-cloned-berlin-matsim.xml.gz";
-        String outputFile = "modified-cloned-berlin-matsim.xml.gz";
+        String inputFile = "scenarios/berlin-v5.5-1pct/input/newnetwork/network-cloned-berlin-matsim.xml.gz";
+        String outputFile = "scenarios/berlin-v5.5-1pct/input/newnetwork/modified-cloned-berlin-matsim.xml.gz";
 
         Network network = NetworkUtils.createNetwork();
         new MatsimNetworkReader(network).readFile(inputFile);
@@ -152,7 +152,9 @@ public final class ExperimentOnBerlinScenario {
         Config config = prepareConfig( args ) ;
         config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
 
-        config.network().setInputFile(outputFile);
+        String config_outputfile = "./newnetwork/modified-cloned-berlin-matsim.xml.gz";
+
+        config.network().setInputFile(config_outputfile);
 
         Scenario scenario = prepareScenario( config ) ;
         Controler controler = prepareControler( scenario ) ;
