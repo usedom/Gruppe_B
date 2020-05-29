@@ -83,10 +83,9 @@ public final class ExperimentOnBerlinScenario {
         if ( args.length==0 ) {
             args = new String[] {"scenarios/berlin-v5.5-1pct/input/berlin-v5.5-1pct.config.xml"}  ;
         }
-
-
-
-       /* File outputfile = new File("cloned-berlin-matsim.xml.gz");
+        //trying to get network
+        /*
+        File outputfile = new File("network-berlin-test.xml.gz");
         try{
             URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
 
@@ -94,7 +93,20 @@ public final class ExperimentOnBerlinScenario {
         } catch (IOException e){
             e.printStackTrace();
         }
-        String inputFile = "cloned-berlin-matsim.xml.gz";
+        config.network().setInputFile(outputfile.getPath());
+        */
+
+
+       File local_inputfile = new File("scenarios/berlin-v5.5-1pct/input/network-cloned-berlin-matsim.xml.gz");
+        try{
+            URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
+
+            FileUtils.copyURLToFile(url,local_inputfile);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        String inputFile = "network-cloned-berlin-matsim.xml.gz";
         String outputFile = "modified-cloned-berlin-matsim.xml.gz";
 
         Network network = NetworkUtils.createNetwork();
@@ -122,10 +134,12 @@ public final class ExperimentOnBerlinScenario {
         network.getLinks().get(Id.createLinkId("96171")).setNumberOfLanes(2);
         network.getLinks().get(Id.createLinkId("57167")).setNumberOfLanes(2);
 
-        new NetworkWriter(network).write(outputFile);*/
+        new NetworkWriter(network).write(outputFile);
 
         Config config = prepareConfig( args ) ;
         config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
+
+        config.network().setInputFile(outputFile);
 
         Scenario scenario = prepareScenario( config ) ;
         Controler controler = prepareControler( scenario ) ;
