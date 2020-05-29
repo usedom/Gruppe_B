@@ -274,6 +274,7 @@ public final class ExperimentOnBerlinScenario {
         config.controler().setOutputDirectory("./output_exp");
 
         //trying to get network
+        /*
         File outputfile = new File("network-berlin-test.xml.gz");
         try{
             URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
@@ -283,6 +284,7 @@ public final class ExperimentOnBerlinScenario {
             e.printStackTrace();
         }
         config.network().setInputFile(outputfile.getPath());
+        */
 
 
 
