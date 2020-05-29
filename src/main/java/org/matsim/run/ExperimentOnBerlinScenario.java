@@ -112,6 +112,17 @@ public final class ExperimentOnBerlinScenario {
         Network network = NetworkUtils.createNetwork();
         new MatsimNetworkReader(network).readFile(inputFile);
 
+        int[] links = {54738,49528,132668,2942,50779,48093,68519,141526,86406,70094,112640,5198,152474,
+                152091, 113237,126333,97508,96172,96171,57167, 52938,113580,57059,69132,57062,69223,94781,
+                113244,30224,50381,89327,59654,99708};
+
+        for (int i:links
+        ) {
+            //network.getLinks().get(Id.createLinkId(Integer.toString(i))).setCapacity(0);
+            network.getLinks().get(Id.createLinkId(Integer.toString(i))).setNumberOfLanes(2);
+        }
+
+        /*
         network.getLinks().get(Id.createLinkId("54738")).setNumberOfLanes(2);
         network.getLinks().get(Id.createLinkId("57458")).setNumberOfLanes(2);
         network.getLinks().get(Id.createLinkId("49528")).setNumberOfLanes(2);
@@ -133,6 +144,8 @@ public final class ExperimentOnBerlinScenario {
         network.getLinks().get(Id.createLinkId("96172")).setNumberOfLanes(2);
         network.getLinks().get(Id.createLinkId("96171")).setNumberOfLanes(2);
         network.getLinks().get(Id.createLinkId("57167")).setNumberOfLanes(2);
+
+         */
 
         new NetworkWriter(network).write(outputFile);
 
