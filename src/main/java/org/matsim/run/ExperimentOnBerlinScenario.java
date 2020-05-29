@@ -76,7 +76,8 @@ public final class ExperimentOnBerlinScenario {
             args = new String[] {"scenarios/berlin-v5.5-1pct/input/berlin-v5.5-1pct.config.xml"}  ;
         }
 
-        NetworkFileModifierB    ;
+        NetworkFileModifierB networkFileModifierB = new NetworkFileModifierB();
+        networkFileModifierB.modify();
 
         Config config = prepareConfig( args ) ;
         config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);

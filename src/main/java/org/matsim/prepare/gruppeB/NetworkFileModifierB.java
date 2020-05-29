@@ -13,7 +13,8 @@ import java.net.URL;
 
 public class NetworkFileModifierB {
 
-    public void modnetwork() {
+
+    public void modify() {
         File inputFile = new File("scenarios/berlin-v5.5-1pct/input/berlin-matsim-v5.5-network.xml.gz");
         try{
             URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
