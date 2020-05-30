@@ -76,12 +76,14 @@ public final class ExperimentOnBerlinScenario {
             args = new String[] {"scenarios/berlin-v5.5-1pct/input/berlin-v5.5-1pct.config.xml"}  ;
         }
 
+        // Run own NetworkModifier
         NetworkFileModifierB networkFileModifierB = new NetworkFileModifierB();
         networkFileModifierB.modify();
 
         Config config = prepareConfig( args ) ;
         config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
 
+        // Set readable Path and change input network in config
         String modified_network = "./modified-cloned-berlin-matsim.xml.gz";
         config.network().setInputFile(modified_network);
 
@@ -133,28 +135,6 @@ public final class ExperimentOnBerlinScenario {
 
         return controler;
     }
-
-
-
-    //Network ournetwork = NetworkUtils.createNetwork();
-    //new MatsimNetworkReader().readFile
-
-    /*// read in the network
-    Network network = NetworkUtils.createNetwork();
-		new MatsimNetworkReader(network).readFile("path-to-network.xml");
-
-    // iterate through all links
-		for (Link l : network.getLinks().values()){
-        //get current capacity
-        double oldCapacity = l.getCapacity();
-        double newCapacity = oldCapacity / 2.0  ;
-
-        //set new capacity
-        l.setCapacity(newCapacity);
-    }
-		new NetworkWriter(network).write("path-to-modified-network.xml");
-
-     */
 
     public static Scenario prepareScenario( Config config ) {
         Gbl.assertNotNull( config );
@@ -230,23 +210,6 @@ public final class ExperimentOnBerlinScenario {
 
         // Set output folder
         config.controler().setOutputDirectory("./output_exp");
-
-        //trying to get network
-        /*
-        File outputfile = new File("network-berlin-test.xml.gz");
-        try{
-            URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
-
-            FileUtils.copyURLToFile(url,outputfile);
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        config.network().setInputFile(outputfile.getPath());
-        */
-
-
-
-
 
         // vsp defaults
         config.vspExperimental().setVspDefaultsCheckingLevel( VspExperimentalConfigGroup.VspDefaultsCheckingLevel.info );
