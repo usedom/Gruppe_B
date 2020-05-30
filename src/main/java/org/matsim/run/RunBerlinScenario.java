@@ -193,6 +193,12 @@ public final class RunBerlinScenario {
 		config.plansCalcRoute().removeModeRoutingParams("undefined");
 		
 		config.qsim().setInsertingWaitingVehiclesBeforeDrivingVehicles( true );
+
+        // Last iteration to xy
+        config.controler().setLastIteration(1);
+
+        // Set output folder
+        config.controler().setOutputDirectory("./output_original");
 				
 		// vsp defaults
 		config.vspExperimental().setVspDefaultsCheckingLevel( VspExperimentalConfigGroup.VspDefaultsCheckingLevel.info );
