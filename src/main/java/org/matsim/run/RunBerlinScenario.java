@@ -198,7 +198,7 @@ public final class RunBerlinScenario {
         config.controler().setLastIteration(1);
 
         // Set output folder
-        config.controler().setOutputDirectory("./output_original");
+        config.controler().setOutputDirectory("./output_ori001");
 				
 		// vsp defaults
 		config.vspExperimental().setVspDefaultsCheckingLevel( VspExperimentalConfigGroup.VspDefaultsCheckingLevel.info );

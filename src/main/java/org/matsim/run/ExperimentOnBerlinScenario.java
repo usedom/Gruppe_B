@@ -209,7 +209,7 @@ public final class ExperimentOnBerlinScenario {
         config.controler().setLastIteration(1);
 
         // Set output folder
-        config.controler().setOutputDirectory("./output_exp");
+        config.controler().setOutputDirectory("./output_exp001");
 
         // vsp defaults
         config.vspExperimental().setVspDefaultsCheckingLevel( VspExperimentalConfigGroup.VspDefaultsCheckingLevel.info );
