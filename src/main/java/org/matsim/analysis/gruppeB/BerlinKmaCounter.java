@@ -1,17 +1,20 @@
 package org.matsim.analysis.gruppeB;
 
 import org.matsim.api.core.v01.Id;
+import org.matsim.api.core.v01.events.Event;
 import org.matsim.api.core.v01.events.LinkEnterEvent;
 import org.matsim.api.core.v01.events.handler.LinkEnterEventHandler;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BerlinKmaCounter implements LinkEnterEventHandler {
 
     // in Datei schreiben
-    private BufferedWriter bufferedWriter = null;
+    private BufferedWriter bufferedWriter;
 
     public BerlinKmaCounter(String outputfile){
 
@@ -25,7 +28,7 @@ public class BerlinKmaCounter implements LinkEnterEventHandler {
 
 
     // Rest
-
+    private List<LinkEnterEvent> events = new ArrayList<>();
     private double[] eastLinkKMA = new double[30];
     private double[] westLinkKMA = new double[30];
 
@@ -35,6 +38,7 @@ public class BerlinKmaCounter implements LinkEnterEventHandler {
 
     @Override
     public void handleEvent(LinkEnterEvent enterKMA){
+
         if(enterKMA.getLinkId().equals(Id.createLinkId("97508")) || enterKMA.getLinkId().equals(Id.createLinkId("54738"))){
             int slot = getSlot(enterKMA.getTime());
             if(enterKMA.getLinkId().equals(Id.createLinkId("97508"))){
@@ -43,12 +47,14 @@ public class BerlinKmaCounter implements LinkEnterEventHandler {
             else if (enterKMA.getLinkId().equals(Id.createLinkId("54738"))){
                 this.westLinkKMA[slot]++;
             }
+            events.add(enterKMA);
         }
     }
 
+
     public void printResult() {
         try {
-            bufferedWriter.write("Hour\tFrom East\tFrom West\tTotal\n");
+            bufferedWriter.write("Hour\tFrom East\tFrom West\tTotal\n" + events.size());
             System.out.println("Hour\tFrom East\tFrom West\tTotal\n");
             for (int i = 0; i < 24; i++) {
                 double east_volume = this.eastLinkKMA[i];
@@ -62,5 +68,11 @@ public class BerlinKmaCounter implements LinkEnterEventHandler {
             throw new RuntimeException(ee);
         }
     }
+
+    public List<LinkEnterEvent> writeListOfEvents() {
+        return this.events;
+
+    }
+
 
 }
