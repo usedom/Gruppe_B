@@ -31,8 +31,8 @@ public class PersonEnterVehicleTimeCheck implements PersonEntersVehicleEventHand
             if (kmaEvent.getVehicleId().compareTo(personEntersVehicleEvent.getVehicleId()) == 0 && kmaEvent.getTime() > personEntersVehicleEvent.getTime()) {
                 personEntersVehicleEventsWhichUsedKMA.add(personEntersVehicleEvent);
             }
-
         }
+
     }
 
     public List<PersonEntersVehicleEvent> writeListOfEvents() {
