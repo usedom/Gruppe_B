@@ -23,9 +23,6 @@ public class NetworkFileModifierB {
         } catch (IOException e){
             e.printStackTrace();
         }
-
-
-
         Network network = NetworkUtils.createNetwork();
         new MatsimNetworkReader(network).readFile(String.valueOf(inputFile));
 
@@ -38,7 +35,6 @@ public class NetworkFileModifierB {
             //network.getLinks().get(Id.createLinkId(Integer.toString(i))).setCapacity(0);
             network.getLinks().get(Id.createLinkId(Integer.toString(i))).setNumberOfLanes(2);
         }
-
 
         String outputFile = "scenarios/berlin-v5.5-1pct/input/modified-cloned-berlin-matsim.xml.gz";
         new NetworkWriter(network).write(outputFile);
