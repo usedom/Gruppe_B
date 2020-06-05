@@ -25,7 +25,7 @@ public class HomeAnalyser implements PersonLeavesVehicleEventHandler {
 
     private List<LinkEnterEvent> kmaEvents;
     private List<PersonEntersVehicleEvent> personEntersVehicleEventsWhichUsedKMA;
-    private List<PersonLeavesVehicleEvent> personLeavesVehicleEventsWhichUsedKMA;
+    private List<PersonLeavesVehicleEvent> personLeavesVehicleEventsWhichUsedKMA = new ArrayList<>();
     Map<Id<Person>, Activity> firstActivities = new HashMap<>();
 
     public HomeAnalyser(List<LinkEnterEvent> listOfLinkEnterEvents, List<PersonEntersVehicleEvent> personEntersVehicleEvents, String outputfile){
