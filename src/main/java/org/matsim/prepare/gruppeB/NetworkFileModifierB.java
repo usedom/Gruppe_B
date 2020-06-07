@@ -29,30 +29,52 @@ public class NetworkFileModifierB {
         Network network = NetworkUtils.createNetwork();
         new MatsimNetworkReader(network).readFile(String.valueOf(inputFile));
 
-        // modify to 3->2 lanes
-        int[] links_3 = {54738,49528,132668,2942,50779,48093,68519,70094,112640,5198,12474,152091,113232,97508,96172,
-                96171,57167,58881,52938,113580,57062,94781,113244,30224,50381,89327};
+        // stays unmodified at 3 lanes, east entry of KMA
+        // int[] links_3_eastentry_unmodified = {54738,49528,132668};
+
+        // stays unmodified at 3 lanes, west exit of KMA
+        // int[] links_3_eastentry_unmodified = {152091};
 
         // stays unmodified at 3 lanes, new turning lanes
         // int[] links_3_turn_unmodified = {141526,69223};
 
-        // stays unmodified, east end of KMA
-        // int[] links_4 = {59654,99708};
+        // modify to 3->2 lanes
+        int[] links_3_b = {2942,50779,48093,68519,70094,112640,5198,12474,113232,97508,96172,
+                96171,57167,58881,52938,113580,57062,94781,113244,30224,50381,89327,152474};
+
+        // stays unmodified at 4 lanes, east end of KMA
+        // int[] links_4 = {99708};
+
+        // modify 4->3 lanes
+        int[] links_4_b = {59654};
 
         //modify to 4->2 lanes
-        int[] links_4_b = {86406,57059,69132}; //modify to 2 lanes
+        int[] links_4_c = {86406,57059,69132};
 
-        // stays unmodified, west end of KMA
-        // int[] links_5 = {113237, 126333};
+        // stays unmodified at 5 lanes, west end of KMA
+        // int[] links_5 = {126333};
 
-        for (int i:links_3
+        // modify to 5->4 lanes
+        int[] links_5_b = {113237};
+
+        for (int i:links_3_b
         ) {
             network.getLinks().get(Id.createLinkId(Integer.toString(i))).setNumberOfLanes(2);
         }
 
         for (int i:links_4_b
         ) {
+            network.getLinks().get(Id.createLinkId(Integer.toString(i))).setNumberOfLanes(3);
+        }
+
+        for (int i:links_4_c
+        ) {
             network.getLinks().get(Id.createLinkId(Integer.toString(i))).setNumberOfLanes(2);
+        }
+
+        for (int i:links_5_b
+        ) {
+            network.getLinks().get(Id.createLinkId(Integer.toString(i))).setNumberOfLanes(4);
         }
 
         String outputFile = "scenarios/berlin-v5.5-1pct/input/modified-cloned-berlin-matsim.xml.gz";
