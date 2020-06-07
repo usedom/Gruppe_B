@@ -63,7 +63,7 @@ public class RunEventsHandlerKMAHome {
         Config config = ConfigUtils.loadConfig(configFile);
 
         // Daniel: Had to change network input directory, comment this if you get a FileNotFoundException
-        config.network().setInputFile("../modified-cloned-berlin-matsim.xml.gz");
+       config.network().setInputFile("./berlin-v5.5-1pct.output_network.xml.gz");
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
         homeAnalyser.analyseHome(scenario);

@@ -1,44 +1,35 @@
 package org.matsim.analysis.gruppeB;
 
-import org.graphstream.ui.j2dviewer.renderer.shape.swing.CircleOnEdge;
+
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.population.*;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
-import org.matsim.core.network.NetworkUtils;
+
 import org.matsim.core.population.PopulationUtils;
 import org.matsim.core.scenario.ScenarioUtils;
-import org.matsim.core.utils.misc.OptionalTime;
 
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class RunKilometerAndTimeComparison {
 
+    private static BufferedWriter bufferedWriter;
+
+
     public static void main(String[] args) {
-        String originalConfigFile = "marcelORIGINAL/berlin-v5.5-1pct.output_config.xml";
-        String modifiedConfigFile = "marcelMODIFIED/berlin-v5.5-1pct.output_config.xml";
 
-        Config originalConfig = ConfigUtils.loadConfig(originalConfigFile);
-        Config modifiedConfig = ConfigUtils.loadConfig(modifiedConfigFile);
+        String originalConfigFile = "outputs/output_ori050/berlin-v5.5-1pct.output_config.xml";
+        String modifiedConfigFile = "outputs/output_exp050/berlin-v5.5-1pct.output_config.xml";
 
-        Scenario originalScenario = ScenarioUtils.loadScenario(originalConfig);
-        Scenario modfiedScenario = ScenarioUtils.loadScenario(modifiedConfig);
-
-
-
-        Population originalPopulation = originalScenario.getPopulation();
-        Population modifiedPopulation = modfiedScenario.getPopulation();
-
-        Map<Id<Person>, ? extends Person> originalPerson = originalPopulation.getPersons();
-        Map<Id<Person>, ? extends Person> modifiedPerson = modifiedPopulation.getPersons();
-
-
-
-        List<Plan> originalPlans =  getAllSelectedPlans(originalScenario, originalPerson);
-        List<Plan> modifiedPlans = getAllSelectedPlans(modfiedScenario, modifiedPerson);
+        List<Plan> originalPlans =  computeSelectedPlans(originalConfigFile);
+        List<Plan> modifiedPlans = computeSelectedPlans(modifiedConfigFile);
 
         Double originalTime = calculateTIme(originalPlans);
         Double modifiedTime = calculateTIme(modifiedPlans);
@@ -46,16 +37,44 @@ public class RunKilometerAndTimeComparison {
         Double originalDistance = calculateDistance(originalPlans);
         Double modifiedDistance = calculateDistance(modifiedPlans);
 
-        System.out.println("OriginlTime: " + originalTime/(originalPerson.size()*3600) + "\n ModifiedTime: " + modifiedTime/(modifiedPerson.size()*3600)
-        + "\n OriginalDistance: " + originalDistance/(originalPerson.size()*1000) + "\n ModifiedDistance: " + modifiedDistance/(modifiedPerson.size()*1000));
+        Double timeDiffernce = modifiedTime - originalTime;
+        Double distanceDifference = modifiedDistance - originalDistance;
+
+        System.out.println("OriginalTime: " + originalTime/3600 + "\n ModifiedTime: " + modifiedTime/3600
+        + "\n OriginalDistance: " + originalDistance/1000 + "\n ModifiedDistance: " + modifiedDistance/1000);
 
 
-
-
-
-
-
+        try {
+            FileWriter fileWriter = new FileWriter("src/main/java/org/matsim/analysis/gruppeB/DifferncesInTimeAndDistance.txt");
+            bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write( "OriginalTime in hours: " + originalTime/3600 + "\n ModifiedTime in hours: " + modifiedTime/3600
+                    + "\n OriginalDistance in kilometers: " + originalDistance/1000 + "\n ModifiedDistance in kilometers: " + modifiedDistance/1000
+            + "\n Time difference in hours: " + timeDiffernce/3600 + "\n Distance differnce in kilometers: " + distanceDifference/1000);
+            bufferedWriter.close();
+        } catch(IOException ee){
+            throw new RuntimeException(ee);
+        }
     }
+
+    private static List<Plan> computeSelectedPlans(String configFileName){
+        List<Plan> selectedPlans = new ArrayList<>();
+
+        Config config = ConfigUtils.loadConfig(configFileName);
+        config.plans().setInputFile("berlin-v5.5-1pct.output_plans.xml.gz");
+        Scenario scenario = ScenarioUtils.loadScenario(config);
+        Population population = scenario.getPopulation();
+        Map<Id<Person>, ? extends Person> persons = population.getPersons();
+
+        for (Id<Person> id : persons.keySet()){
+            Person p = PopulationUtils.findPerson(id,scenario);
+
+
+            selectedPlans.add(p.getSelectedPlan());
+        }
+
+        return selectedPlans;
+    }
+
 
     private static Double calculateTIme(List<Plan> Plans) {
         Double time = 0.0;
@@ -66,7 +85,6 @@ public class RunKilometerAndTimeComparison {
 
             for (PlanElement planElement: planElements) {
                 if(planElement instanceof Leg){
-                    //System.out.println(((Route)(((Leg)planElement).getRoute())).getTravelTime());
                     time += ((Route)(((Leg)planElement).getRoute())).getTravelTime().seconds();
 
                 }
@@ -93,17 +111,6 @@ public class RunKilometerAndTimeComparison {
 
         }
         return distance;
-    }
-
-    private static List<Plan> getAllSelectedPlans(Scenario Scenario, Map<Id<Person>, ? extends Person> Persons) {
-        List<Plan> selectedPlans = new ArrayList<>();
-
-        for (Id<Person> id : Persons.keySet()){
-            Person p = PopulationUtils.findPerson(id,Scenario);
-            selectedPlans.add(p.getSelectedPlan());
-        }
-
-        return selectedPlans;
     }
 
 }
