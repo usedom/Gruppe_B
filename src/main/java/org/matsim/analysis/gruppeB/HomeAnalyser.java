@@ -6,10 +6,10 @@ import org.matsim.api.core.v01.events.LinkEnterEvent;
 import org.matsim.api.core.v01.events.PersonEntersVehicleEvent;
 import org.matsim.api.core.v01.events.PersonLeavesVehicleEvent;
 import org.matsim.api.core.v01.events.handler.PersonLeavesVehicleEventHandler;
-import org.matsim.api.core.v01.population.Activity;
-import org.matsim.api.core.v01.population.Person;
-import org.matsim.api.core.v01.population.Plan;
+import org.matsim.api.core.v01.population.*;
 import org.matsim.core.population.PopulationUtils;
+import org.matsim.core.population.io.PopulationReader;
+import org.matsim.core.router.TripStructureUtils;
 import org.matsim.vehicles.Vehicle;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -34,6 +34,9 @@ public class HomeAnalyser implements PersonLeavesVehicleEventHandler {
     Map<Double, Id<Person>> personmap = new HashMap<>();
     List<Double> x_homes = new ArrayList<>();
     List<Double> y_homes = new ArrayList<>();
+
+    List<PlanElement> planElements = new ArrayList<>();
+    List<TripStructureUtils.Trip> tripList = new ArrayList<>();
 
 
     public HomeAnalyser(List<LinkEnterEvent> listOfLinkEnterEvents, List<PersonEntersVehicleEvent> personEntersVehicleEvents, String outputfile, String outputfile_CSV, Map<Double, Id<Vehicle>> vehiclemap, List<Double> timelist){
@@ -65,7 +68,7 @@ public class HomeAnalyser implements PersonLeavesVehicleEventHandler {
     }
 
     public void analyseHome(Scenario scenario){
-
+        int person_it = 0;
         for (PersonLeavesVehicleEvent leaveEvent: personLeavesVehicleEventsWhichUsedKMA) {
 
             /** (1) Used for Classic printResult */
@@ -76,6 +79,18 @@ public class HomeAnalyser implements PersonLeavesVehicleEventHandler {
 
                     Person p = PopulationUtils.findPerson(personLeftVehicle, scenario);
                     Plan plan = p.getSelectedPlan();
+
+                    tripList = TripStructureUtils.getTrips(plan);
+                    System.out.println("Person: " + person_it++);
+                    //planElements = plan.getPlanElements();
+                    for(int i=0; i<tripList.size(); i++){
+                        Activity startactivity = tripList.get(i).getOriginActivity();
+                        System.out.println("Start-Plan: " + tripList.get(i) + "\t" + "Coord: " + startactivity.getCoord());
+                        Activity endactivity = tripList.get(i).getDestinationActivity();
+                        System.out.println("End-Plan: " + tripList.get(i) + "\t" + "Coord: " + endactivity.getCoord());
+                    }
+                    System.out.println("############################################\n\n");
+
                     Activity firstActivity = PopulationUtils.getFirstActivity(plan);
                     firstActivities.put(personLeftVehicle, firstActivity);
                 }
