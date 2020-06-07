@@ -1,15 +1,9 @@
 package org.matsim.analysis.gruppeB;
 
 
-import org.matsim.api.core.v01.Id;
-import org.matsim.api.core.v01.Scenario;
-import org.matsim.api.core.v01.events.Event;
 import org.matsim.api.core.v01.events.LinkEnterEvent;
 import org.matsim.api.core.v01.events.PersonEntersVehicleEvent;
 import org.matsim.api.core.v01.events.handler.PersonEntersVehicleEventHandler;
-import org.matsim.api.core.v01.population.Person;
-import org.matsim.core.events.EventsReaderXMLv1;
-import org.matsim.core.network.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +15,6 @@ public class PersonEnterVehicleTimeCheck implements PersonEntersVehicleEventHand
 
     public PersonEnterVehicleTimeCheck(List<LinkEnterEvent> listOfLinkEnterEvents){
         kmaEvents = listOfLinkEnterEvents;
-
     }
 
 

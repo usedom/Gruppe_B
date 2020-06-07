@@ -23,8 +23,6 @@ public class RunEventsHandlerKMAHome {
 
         EventsManager eventsManager = EventsUtils.createEventsManager();
 
-
-
         /*
         SimpleEventHandler eventHandler = new SimpleEventHandler();
         eventsManager.addHandler(eventHandler);
@@ -58,7 +56,6 @@ public class RunEventsHandlerKMAHome {
         Scenario scenario = ScenarioUtils.loadScenario(config);
         homeAnalyser.analyseHome(scenario);
         homeAnalyser.printResult();
-
 
     }
 }

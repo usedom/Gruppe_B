@@ -12,8 +12,6 @@ public class RunEventsHandlerKMA {
 
         EventsManager eventsManager = EventsUtils.createEventsManager();
 
-
-
         /*
         SimpleEventHandler eventHandler = new SimpleEventHandler();
         eventsManager.addHandler(eventHandler);

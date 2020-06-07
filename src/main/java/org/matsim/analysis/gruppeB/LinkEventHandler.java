@@ -21,11 +21,12 @@ public class LinkEventHandler implements LinkEnterEventHandler {
 //            113244,30224,50381,89327,59654,99708
     @Override
    public void handleEvent(LinkEnterEvent event){
-        for (int i : MostInterestingLinks) {
+       for (int i : MostInterestingLinks) {
             if (event.getLinkId().equals(Id.createLinkId(Integer.toString(i)))) {
                 WichtigeVehicles.put(event.getVehicleId(), event.getTime()); //Vielleicht ist es sinnvoller anstatt 0 noch die Zeit zu adden wenn Fahrzeug link befahren hat
             }
         }
+
     }
 
     public void print(){
