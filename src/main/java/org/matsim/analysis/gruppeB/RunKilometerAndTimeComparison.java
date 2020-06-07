@@ -60,6 +60,7 @@ public class RunKilometerAndTimeComparison {
         List<Plan> selectedPlans = new ArrayList<>();
 
         Config config = ConfigUtils.loadConfig(configFileName);
+        config.network().setInputFile("berlin-v5.5-1pct.output_network.xml.gz");
         config.plans().setInputFile("berlin-v5.5-1pct.output_plans.xml.gz");
         Scenario scenario = ScenarioUtils.loadScenario(config);
         Population population = scenario.getPopulation();
