@@ -1,11 +1,7 @@
 package org.matsim.analysis.gruppeB;
 
-import javax.swing.text.Element;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class HandleKMAPersonLists {
 
@@ -20,27 +16,9 @@ public class HandleKMAPersonLists {
         allinputs.add(west_leave);
         allinputs.add(east_leave);
 
-        /*
-        List<String> output = new ArrayList<String>();
-        try {
-            in = new BufferedReader(new FileReader(allinputs.get(0)));
-            String str;
-            while ((str = in.readLine()) != null) {
-                output.add(str);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
+        List<String> output = new ArrayList<>();
 
-         */
-
-        List<String> output = new ArrayList<String>();
+        System.out.println("Run merge ...\n");
 
         for(int i=0;i<3;i++) {
             try {
@@ -64,27 +42,12 @@ public class HandleKMAPersonLists {
         System.out.println(output.toString() + "\n");
 
         Set<String> outputset = new LinkedHashSet<>(output);
-        /*
-        for(int i=1;i<3;i++)
-        try {
-            in = new BufferedReader(new FileReader(allinputs.get(i)));
-            String str;
-            while ((str = in.readLine()) != null) {
-                if(!output.contains(str)) {
-                    output.add(str);
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
 
-         */
+        System.out.println("### " + outputset.size() + " entries after merging ###");
+        System.out.println(outputset);
+
+        System.out.println("\nDONE!\n###\n");
+
         return outputset;
     }
 
@@ -92,6 +55,9 @@ public class HandleKMAPersonLists {
         List<String> onlykma = new ArrayList<>();
         List<String> onlykma_mod = new ArrayList<>();
         List<String> bothkma = new ArrayList<>();
+
+        System.out.println("\nComparison ...\n");
+
         for(Object id:kma){
             if(!kma_mod.contains(id.toString())){
                 onlykma.add((String) id);
@@ -117,14 +83,51 @@ public class HandleKMAPersonLists {
 
         System.out.println(bothkma.size() + " in both networks:");
         System.out.println(bothkma);
+        System.out.println("\nDONE!\n###\n");
     }
 
-    public void printout_terminal(Set<String> output){
-        System.out.println("### " + output.size() + " entries after merging ###");
-        System.out.println(output + "\n");
+    public List<List<String>> compareIDappearance_list(Set<String> kma, Set<String> kma_mod){
+        List<List<String>> output = new ArrayList<>();
+        List<String> onlykma = new ArrayList<>();
+        List<String> onlykma_mod = new ArrayList<>();
+        List<String> bothkma = new ArrayList<>();
+
+        output.add(0,onlykma);
+        output.add(1,onlykma_mod);
+        output.add(2,bothkma);
+
+        System.out.println("\nComparison into List...\n");
+
+        for(Object id:kma){
+            if(!kma_mod.contains(id.toString())){
+                onlykma.add((String) id);
+            }
+            else{
+                bothkma.add((String) id);
+            }
+        }
+        System.out.println(onlykma.size() + " IDs written into list 1: Not anymore in modified network:");
+        for(Object id:kma_mod){
+            if(!kma.contains(id.toString())){
+                onlykma_mod.add((String) id);
+            }
+            else{
+                if(!bothkma.contains(id.toString())) {
+                    bothkma.add((String) id);
+                }
+            }
+        }
+        System.out.println(onlykma_mod.size() + " IDs written into list 2: New in modified network:");
+
+        System.out.println(bothkma.size() + " IDs written into list 3: In both networks:");
+        System.out.println("\nDONE!\n###\n");
+
+        return output;
     }
 
-    public void printout_txt(Set<String> output, String output_txt){
+
+    public void printout_set_txt(Set<String> output, String output_txt){
+        System.out.println("Write into " +  output_txt);
         try {
             FileWriter fileWriter = new FileWriter(output_txt);
             bufferedWriter = new BufferedWriter(fileWriter);
@@ -136,6 +139,22 @@ public class HandleKMAPersonLists {
         } catch(IOException ee){
             throw new RuntimeException(ee);
         }
+        System.out.println("\nDONE!\n###\n");
     }
 
+    public void printout_list_txt(List<String> output, String output_txt) {
+        System.out.println("Write into " + output_txt);
+        try {
+            FileWriter fileWriter = new FileWriter(output_txt);
+            bufferedWriter = new BufferedWriter(fileWriter);
+            for (String id : output) {
+                bufferedWriter.write(id);
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.close();
+        } catch (IOException ee) {
+            throw new RuntimeException(ee);
+        }
+        System.out.println("\nDONE!\n###\n");
+    }
 }

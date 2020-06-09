@@ -55,7 +55,7 @@ public class RunKilometerAndTimeComparison {
             throw new RuntimeException(ee);
         }
     }
-//Method returns a list of plans that are executed in matsim from the name of the config file
+//Method returns a list of selected plans that are executed in matsim from the name of the config file
     private static List<Plan> computeSelectedPlans(String configFileName){
         List<Plan> selectedPlans = new ArrayList<>();
 
