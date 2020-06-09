@@ -1,7 +1,6 @@
 package org.matsim.analysis.gruppeB;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 public class MergeKMAHandler {
@@ -9,7 +8,7 @@ public class MergeKMAHandler {
     public static void main(String[] args) throws IOException {
 
         // Set your working folder
-        String inputfolder = "C:/Users/djp/Desktop/task 3/";
+        String inputfolder = "C:/Users/Julia/Desktop/git/Gruppe_B/outputs/personcount/";
         System.setProperty("user.dir",inputfolder);
 
         String kma_ori_west_enter = System.getProperty("user.dir")+"Agents entering KMA on west Link 97508.txt";
@@ -33,8 +32,8 @@ public class MergeKMAHandler {
         mergeKM.printout_terminal(mod_merge_all);
 
         // Set output file txt:
-        String output_txt = System.getProperty("user.dir")+"merge_all.txt";
-        mergeKM.printout_txt(mod_merge_all, output_txt);
+        String output_txt = System.getProperty("user.dir")+"merge_all_ori.txt";
+        mergeKM.printout_txt(ori_merge_all, output_txt);
 
     }
 }
