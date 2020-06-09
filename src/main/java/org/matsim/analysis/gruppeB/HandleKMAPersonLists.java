@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MergeKMAPersonLists {
+public class HandleKMAPersonLists {
 
     private static BufferedWriter bufferedWriter;
     private  static BufferedReader bufferedReader;
@@ -86,6 +86,37 @@ public class MergeKMAPersonLists {
 
          */
         return outputset;
+    }
+
+    public void compareIDappearance(Set<String> kma, Set<String> kma_mod){
+        List<String> onlykma = new ArrayList<>();
+        List<String> onlykma_mod = new ArrayList<>();
+        List<String> bothkma = new ArrayList<>();
+        for(Object id:kma){
+            if(!kma_mod.contains(id.toString())){
+                onlykma.add((String) id);
+            }
+            else{
+                bothkma.add((String) id);
+            }
+        }
+        System.out.println(onlykma.size() + " IDs not anymore in modified network:");
+        System.out.println(onlykma);
+        for(Object id:kma_mod){
+            if(!kma.contains(id.toString())){
+                onlykma_mod.add((String) id);
+            }
+            else{
+                if(!bothkma.contains(id.toString())) {
+                    bothkma.add((String) id);
+                }
+            }
+        }
+        System.out.println(onlykma_mod.size() + " IDs new in modified network:");
+        System.out.println(onlykma_mod);
+
+        System.out.println(bothkma.size() + " in both networks:");
+        System.out.println(bothkma);
     }
 
     public void printout_terminal(Set<String> output){

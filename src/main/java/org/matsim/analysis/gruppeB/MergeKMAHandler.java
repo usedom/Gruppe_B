@@ -22,7 +22,7 @@ public class MergeKMAHandler {
         String kma_mod_west_leave = System.getProperty("user.dir")+"agents leaving KMA_mod on west link 126333.txt";
         String kma_mod_east_leave = System.getProperty("user.dir")+"agents leaving KMA_mod on east link 99708.txt";
 
-        MergeKMAPersonLists mergeKM = new MergeKMAPersonLists();
+        HandleKMAPersonLists mergeKM = new HandleKMAPersonLists();
 
         System.out.println("Merge ALL - Ori:");
         Set<String> ori_merge_all = mergeKM.merge_all(kma_ori_west_enter, kma_ori_east_enter, kma_ori_west_leave, kma_ori_east_leave);
@@ -35,6 +35,8 @@ public class MergeKMAHandler {
         // Set output file txt:
         String output_txt = System.getProperty("user.dir")+"merge_all.txt";
         mergeKM.printout_txt(mod_merge_all, output_txt);
+
+        mergeKM.compareIDappearance(ori_merge_all, mod_merge_all);
 
     }
 }
