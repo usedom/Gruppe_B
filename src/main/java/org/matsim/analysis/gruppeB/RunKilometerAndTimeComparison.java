@@ -55,12 +55,11 @@ public class RunKilometerAndTimeComparison {
             throw new RuntimeException(ee);
         }
     }
-
+//Method returns a list of plans that are executed in matsim from the name of the config file
     private static List<Plan> computeSelectedPlans(String configFileName){
         List<Plan> selectedPlans = new ArrayList<>();
 
         Config config = ConfigUtils.loadConfig(configFileName);
-        config.network().setInputFile("berlin-v5.5-1pct.output_network.xml.gz");
         config.plans().setInputFile("berlin-v5.5-1pct.output_plans.xml.gz");
         Scenario scenario = ScenarioUtils.loadScenario(config);
         Population population = scenario.getPopulation();
@@ -76,7 +75,8 @@ public class RunKilometerAndTimeComparison {
         return selectedPlans;
     }
 
-
+//method calculates how much travel time agents aggregate
+    //The method uses as input a list of plans
     private static Double calculateTIme(List<Plan> Plans) {
         Double time = 0.0;
 
@@ -86,7 +86,7 @@ public class RunKilometerAndTimeComparison {
 
             for (PlanElement planElement: planElements) {
                 if(planElement instanceof Leg){
-                    time += ((Route)(((Leg)planElement).getRoute())).getTravelTime().seconds();
+                    time += (((Leg)planElement).getRoute()).getTravelTime().seconds();
 
                 }
 
@@ -96,6 +96,8 @@ public class RunKilometerAndTimeComparison {
         return time;
     }
 
+    //method calculates how much travel distance agents aggregate
+    //The method uses as input a list of plans
     private static Double calculateDistance(List<Plan> Plans) {
         Double distance = 0.0;
 
@@ -104,7 +106,7 @@ public class RunKilometerAndTimeComparison {
 
             for (PlanElement planElement: planElements) {
                 if(planElement instanceof Leg){
-                    distance+= ((Route)(((Leg)planElement).getRoute())).getDistance();
+                    distance+= (((Leg)planElement).getRoute()).getDistance();
 
                 }
 
