@@ -69,7 +69,7 @@ public class RunEventsHandlerKMAHome {
         homeAnalyser.analyseHome(scenario);
 
         /** (1) Classic printResult: "Person ID, HomeLink, HomeCoord" in .txt */
-        //homeAnalyser.printResult();
+        homeAnalyser.printResult();
 
         /** (2) Ordered, chronological printResult: "Time, Person ID, Home X, Home Y" in .txt */
         homeAnalyser.printResult_v2();
