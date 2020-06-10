@@ -20,7 +20,8 @@ Then it checks if a personsEnterVehcileEvents occurs before the link enter event
 At the end it checks if the personsLeavesVehicleEvent occurs after the linkEnterEvent and anlyses the home coordinates of agents
 */
 
-
+/** Class is used to produce numberOfAgents.txt, numberOfAgents_rev.txt, HomeAreas.txt, HomeAreas_rev.txt,
+ * HomeAreas.csv and HomeAreas_rev.csv*/
 public class RunEventsHandlerKMAHome {
     public static void main(String[] args) {
         /**

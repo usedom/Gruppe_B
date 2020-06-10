@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/** class is used to produce DifferncesInTimeAndDistance.txt*/
 public class RunKilometerAndTimeComparison {
 
     private static BufferedWriter bufferedWriter;

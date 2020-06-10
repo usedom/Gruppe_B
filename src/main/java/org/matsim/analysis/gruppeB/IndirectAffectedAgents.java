@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/** class is used to produce affectedPersons.txt and unaffectedPersons.txt*/
 public class IndirectAffectedAgents {
 
     private static BufferedWriter bufferedWriter;
