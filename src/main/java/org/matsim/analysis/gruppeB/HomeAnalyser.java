@@ -57,7 +57,8 @@ public class HomeAnalyser implements PersonLeavesVehicleEventHandler {
     }
 
 
-
+//handleEvents checks if the personLeaveVehicleEvents is the same Vehcile ID as in the kmaEvent list (linkEnterEvents)
+    //and if the linkEnter event happens before the person leaves their vehicle
     @Override
     public void handleEvent(PersonLeavesVehicleEvent personLeavesVehicleEvent) {
         for (LinkEnterEvent kmaEvent: kmaEvents) {
@@ -67,6 +68,7 @@ public class HomeAnalyser implements PersonLeavesVehicleEventHandler {
         }
     }
 
+    //
     public void analyseHome(Scenario scenario){
         int person_it = 0;
         for (PersonLeavesVehicleEvent leaveEvent: personLeavesVehicleEventsWhichUsedKMA) {

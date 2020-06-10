@@ -13,7 +13,8 @@ import java.net.URL;
 
 public class NetworkFileModifierB {
 
-
+// The method uses as the input network on the vsp website and changes the number of lanes on the Karl-Marx-Allee
+    //The new network is named modified-cloned-berlin-matsim.xml.gz"
     public void modify() {
         File inputFile = new File("scenarios/berlin-v5.5-1pct/input/berlin-matsim-v5.5-network.xml.gz");
         try{

@@ -24,7 +24,7 @@ public class PersonEnterVehicleTimeCheck implements PersonEntersVehicleEventHand
 
     }
 
-
+//Checks that the linkEnterEvent is after the personEntersVehicleEvent
     @Override
     public void handleEvent(PersonEntersVehicleEvent personEntersVehicleEvent) {
         for (LinkEnterEvent kmaEvent: kmaEvents) {

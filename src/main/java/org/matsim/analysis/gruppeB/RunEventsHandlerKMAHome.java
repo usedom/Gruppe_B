@@ -14,6 +14,13 @@ import org.matsim.vehicles.Vehicle;
 import java.util.List;
 import java.util.Map;
 
+
+/* The main mehthod beginns with by computing a list of LinkEnterEvents on the Karl-Marx-Allee
+Then it checks if a personsEnterVehcileEvents occurs before the link enter event
+At the end it checks if the personsLeavesVehicleEvent occurs after the linkEnterEvent and anlyses the home coordinates of agents
+*/
+
+
 public class RunEventsHandlerKMAHome {
     public static void main(String[] args) {
         /**
