@@ -6,7 +6,7 @@ import java.util.*;
 public class HandleKMAPersonLists {
 
     private static BufferedWriter bufferedWriter;
-    private  static BufferedReader bufferedReader;
+    private static BufferedReader bufferedReader;
 
     public Set<String> merge_all(String west_enter, String east_enter, String west_leave, String east_leave) throws IOException {
 

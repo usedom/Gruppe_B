@@ -28,6 +28,9 @@ public class RunEventsHandlerKMAHome {
         1. Check inputfile/configfile path
         2. Set ouputfile paths: "example" for KMAenterlinks / "example_rev" for KMAleavelinks -> Check BerlinKmaCounter
          */
+
+        /** Use index _exp050 to use modified network or index _ori050 to use unmodified network */
+
         String inputFile = "output_exp050/berlin-v5.5-1pct.output_events.xml.gz";
         String configFile = "output_exp050/berlin-v5.5-1pct.output_config.xml";
         //String outputFile = "output_exp050/numberOfAgents.txt";
