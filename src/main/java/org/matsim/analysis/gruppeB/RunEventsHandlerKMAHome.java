@@ -14,21 +14,31 @@ import org.matsim.vehicles.Vehicle;
 import java.util.List;
 import java.util.Map;
 
+/* The main mehthod beginns with by computing a list of LinkEnterEvents on the Karl-Marx-Allee
+Then it checks if a personsEnterVehcileEvents occurs before the link enter event
+At the end it checks if the personsLeavesVehicleEvent occurs after the linkEnterEvent and anlyses the home coordinates of agents
+*/
+
+/** Class is used to produce numberOfAgents.txt, numberOfAgents_rev.txt, HomeAreas.txt, HomeAreas_rev.txt,
+ * HomeAreas.csv and HomeAreas_rev.csv*/
 public class RunEventsHandlerKMAHome {
     public static void main(String[] args) {
         /**
-        1. Check inputfile/configfile path
+        1. Check inputfile/configfile path !
         2. Set ouputfile paths: "example" for KMAenterlinks / "example_rev" for KMAleavelinks -> Check BerlinKmaCounter
          */
-        String inputFile = "output_exp050/berlin-v5.5-1pct.output_events.xml.gz";
-        String configFile = "output_exp050/berlin-v5.5-1pct.output_config.xml";
-        //String outputFile = "output_exp050/numberOfAgents.txt";
-        String outputFile = "output_exp050/numberOfAgents_rev.txt";
-        //String PersonHomesFile = "output_exp050/HomeAreas.txt";
-        String PersonHomesFile = "output_exp050/HomeAreas_rev.txt";
 
-        //String PersonHomesFile_CSV = "output_exp050/HomeAreas.csv";
-        String PersonHomesFile_CSV = "output_exp050/HomeAreas_rev.csv";
+        /** Use folder modified to write modified network or folder original to use unmodified network */
+
+        String inputFile = "output_exp050/berlin-v5.5-1pct.output_events.xml.gz";
+        String configFile = "output_ori050/berlin-v5.5-1pct.output_config.xml";
+        //String outputFile = "gruppeB_TXSandCSV/modified/numberOfAgents.txt";
+        String outputFile = "gruppeB_TXSandCSV/modified/numberOfAgents_rev.txt";
+        //String PersonHomesFile = "output_exp050/HomeAreas.txt";
+        String PersonHomesFile = "gruppeB_TXSandCSV/modified/HomeAreas_rev.txt";
+
+        //String PersonHomesFile_CSV = "ogruppeB_TXSandCSV/modified/HomeAreas.csv";
+        String PersonHomesFile_CSV = "gruppeB_TXSandCSV/modified/HomeAreas_rev.csv";
 
         EventsManager eventsManager = EventsUtils.createEventsManager();
 
@@ -63,7 +73,7 @@ public class RunEventsHandlerKMAHome {
         Config config = ConfigUtils.loadConfig(configFile);
 
         // Daniel: Had to change network input directory, comment this if you get a FileNotFoundException
-       config.network().setInputFile("./berlin-v5.5-1pct.output_network.xml.gz");
+        config.network().setInputFile("./berlin-v5.5-1pct.output_network.xml.gz");
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
         homeAnalyser.analyseHome(scenario);

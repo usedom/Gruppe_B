@@ -1,0 +1,6 @@
+OriginalTime in hours: 88370.6625
+ ModifiedTime in hours: 88452.59361111111
+ OriginalDistance in kilometers: 1719319.4260236623
+ ModifiedDistance in kilometers: 1718298.2607285585
+ Time difference in hours: 81.93111111111111
+ Distance differnce in kilometers: -1021.1652951037884
