@@ -21,14 +21,14 @@ public class RunModalAnalyzer {
 
         Grid grid = new Grid(100);
 
-        Map<String, Integer>[][] berlingrid = grid.createGrid();
+        Map<String, Integer>[][] berlingrid = grid.createGrid();  // new Grid(100).createGrid();
         grid.printGrid(berlingrid);
         grid.printGridLines_via(berlingrid);
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
 
         GridZoneAnalyzer gza = new GridZoneAnalyzer(config, scenario);
-        Map<Id<Person>, Coord> persons5050 = gza.getPersonsHomeInZone(berlingrid[50][50]);
+        Map<Id<Person>, Coord> persons5050 = gza.getPersonsHomeInZone(berlingrid[49][59]);
         gza.modalSplitInZone(persons5050);
 
     }
