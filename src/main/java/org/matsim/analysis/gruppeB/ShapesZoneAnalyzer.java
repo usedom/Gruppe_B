@@ -139,10 +139,11 @@ public class ShapesZoneAnalyzer {
             System.out.println("#################");
             //*/
 
-            Activity activity = PopulationUtils.getFirstActivity(plan);
+            Activity firstActivity = PopulationUtils.getFirstActivity(plan);
             List<Leg> legList = PopulationUtils.getLegs(plan);
-            if(legList.isEmpty() == false && activity.getType()!="freight"){
-                String mode = legList.get(0).getMode();
+
+            if(!legList.isEmpty() && firstActivity.getType()!="freight"){
+                String mode = legList.get(legListSize).getMode();
                 String nextmode = legList.get(1).getMode();
                 /** Classic: Count first leg mode */
                 /*
@@ -153,9 +154,8 @@ public class ShapesZoneAnalyzer {
 
                 /** Alternative way to count second leg mode, if first is "walk" (-> default setting) */
                 //*
-                if (modalsplit.containsKey(mode)) {
-                    if (mode == "walk" && nextmode!=null) {
-                        Activity nextactivity = PopulationUtils.getNextActivity(plan, legList.get(0));
+                if (mode == "walk" && nextmode!=null) {
+                    Activity nextactivity = PopulationUtils.getNextActivity(plan, legList.get(0));
                         if(nextactivity.toString().contains("interaction")){
                             modalsplit.put(nextmode, modalsplit.get(nextmode) + 1);
                         }
@@ -165,8 +165,6 @@ public class ShapesZoneAnalyzer {
                     } else {
                         modalsplit.put(mode, modalsplit.get(mode) + 1);
                     }
-                }
-                //*/
 
                 /** Count all legs of this person */
                 /*
@@ -175,10 +173,39 @@ public class ShapesZoneAnalyzer {
                         modalsplit.put(leg.getMode(),modalsplit.get(leg.getMode())+1);
                     }
                 }
+
+
+                 */
                 //*/
                 total++;
             }
-        }
+            Activity lastActivity = PopulationUtils.getLastActivity(plan);
+            int legListSize = legList.size();
+            if(!legList.isEmpty() && lastActivity.getType()!="freight"){
+                String mode = legList.get(legListSize).getMode();
+                String previousMode = legList.get(legListSize-1).getMode();
+                /** Classic: Count first leg mode */
+                /*
+                if(modalsplit.containsKey(mode)){
+                    modalsplit.put(mode,modalsplit.get(mode)+1);
+                }
+                // */
+
+                /** Alternative way to count second leg mode, if first is "walk" (-> default setting) */
+                //*
+                if (mode == "walk" && previousMode!=null) {
+                    Activity previousActivity = PopulationUtils.getPreviousActivity(plan, legList.get(legListSize));
+                    if(previousActivity.toString().contains("interaction")){
+                        modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
+                    }
+                    else {
+                        modalsplit.put(mode, modalsplit.get(mode) + 1);
+                    }
+                } else {
+                    modalsplit.put(mode, modalsplit.get(mode) + 1);
+                }
+                total++;
+            }
 
         // Print out message with modal split statistics...
         System.out.println("I count the following legs:");
