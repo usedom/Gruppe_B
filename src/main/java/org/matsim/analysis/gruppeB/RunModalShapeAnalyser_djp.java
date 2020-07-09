@@ -8,12 +8,14 @@ import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.scenario.ScenarioUtils;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
-public class RunModalShapeAnalyser_djp {
+public class RunModalShapeAnalyser {
     private static BufferedWriter writer;
 
     public static void main(String[] args) {
@@ -31,17 +33,27 @@ public class RunModalShapeAnalyser_djp {
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
 
-        ShapesZoneAnalyzer_djp shapesZoneAnalyzerDjp = new ShapesZoneAnalyzer_djp(config, scenario, shapeFile);
+        ShapesZoneAnalyzer shapesZoneAnalyzer = new ShapesZoneAnalyzer(config, scenario, shapeFile);
 
 
-      //  [int] interestingShapes = []
+        int [] extendedArea = {60, 65,61,66,53,55,54,287,289,283,280,51};
+        Map<Id<Person>, Coord> personsAlongM10 = new HashMap<>();
+
+
         String output = "";
-        for (int i = 1; i < 448; i++){
-            Map<Id<Person>, Coord> persons5050 = shapesZoneAnalyzerDjp.getPersonsHomeInShape(i);
-            output+="\n\n" + i;
-            output += shapesZoneAnalyzerDjp.modalSplitInZone(persons5050);
+        for (int i : extendedArea) {
+            Map<Id<Person>, Coord> persons5050 = shapesZoneAnalyzer.getPersonsHomeInShape(i);
 
+            for (Id<Person> personId : persons5050.keySet()){
+                personsAlongM10.put(personId, persons5050.get(personId));
+            }
+
+
+           // output+="\n\n" + i;
+            //output += shapesZoneAnalyzer.modalSplitInZone(persons5050);
         }
+
+        output = shapesZoneAnalyzer.modalSplitInZone(personsAlongM10);
 
 
         try {
