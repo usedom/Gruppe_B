@@ -29,9 +29,6 @@ public class ShapesZoneAnalyzer {
         this.shapeFile = shapeFile;
     }
 
-
-
-
   /*
 
         File input =  new File("scenarios/berlin-v5.5-1pct/input/berlin-matsim-v5.5-network.xml.gz");
