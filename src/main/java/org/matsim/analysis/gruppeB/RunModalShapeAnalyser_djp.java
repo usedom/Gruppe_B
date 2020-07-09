@@ -8,13 +8,12 @@ import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.scenario.ScenarioUtils;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
-public class RunModalShapeAnalyser {
+public class RunModalShapeAnalyser_djp {
     private static BufferedWriter writer;
 
     public static void main(String[] args) {
@@ -22,7 +21,7 @@ public class RunModalShapeAnalyser {
         // Uncomment line below to printout your root folder
         System.out.println(System.getProperty("user.dir"));
 
-        String configFile = "outputs/output_ori050/berlin-v5.5-1pct.output_config.xml";
+        String configFile = "output_ori050/berlin-v5.5-1pct.output_config.xml";
         String outputTxt = "gruppeB_TXSandCSV/shapeModes.txt";
         String shapeFile = "scenarios/berlin-v5.5-1pct/input/LOR_new.shp";
 
@@ -32,16 +31,15 @@ public class RunModalShapeAnalyser {
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
 
-        ShapesZoneAnalyzer shapesZoneAnalyzer = new ShapesZoneAnalyzer(config, scenario, shapeFile);
+        ShapesZoneAnalyzer_djp shapesZoneAnalyzerDjp = new ShapesZoneAnalyzer_djp(config, scenario, shapeFile);
 
 
-      //  [int] intrstingShaps = []
+      //  [int] interestingShapes = []
         String output = "";
         for (int i = 1; i < 448; i++){
-            Map<Id<Person>, Coord> persons5050 = shapesZoneAnalyzer.getPersonsHomeInShape(i);
+            Map<Id<Person>, Coord> persons5050 = shapesZoneAnalyzerDjp.getPersonsHomeInShape(i);
             output+="\n\n" + i;
-            output += shapesZoneAnalyzer.modalSplitInZone(persons5050);
-
+            output += shapesZoneAnalyzerDjp.modalSplitInZone(persons5050);
 
         }
 

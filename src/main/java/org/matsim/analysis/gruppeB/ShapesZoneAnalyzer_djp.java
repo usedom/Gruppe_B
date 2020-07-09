@@ -17,13 +17,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ShapesZoneAnalyzer {
+public class ShapesZoneAnalyzer_djp {
 
     Config config;
     Scenario scenario;
     String shapeFile;
 
-    public ShapesZoneAnalyzer(Config config, Scenario scenario, String shapeFile){
+    public ShapesZoneAnalyzer_djp(Config config, Scenario scenario, String shapeFile){
         this.config = config;
         this.scenario = scenario;
         this.shapeFile = shapeFile;
