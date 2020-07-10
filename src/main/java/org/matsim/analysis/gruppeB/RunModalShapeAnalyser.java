@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class RunModalShapeAnalyser {
@@ -35,15 +36,24 @@ public class RunModalShapeAnalyser {
         ShapesZoneAnalyzer shapesZoneAnalyzer = new ShapesZoneAnalyzer(config, scenario, shapeFile);
 
 
-      //  [int] intrstingShaps = []
+        int [] extendedArea = {60, 65,61,66,53,55,54,287,289,283,280,51};
+        Map<Id<Person>, Coord> personsAlongM10 = new HashMap<>();
+
+
         String output = "";
-        for (int i = 1; i < 448; i++){
+        for (int i : extendedArea) {
             Map<Id<Person>, Coord> persons5050 = shapesZoneAnalyzer.getPersonsHomeInShape(i);
-            output+="\n\n" + i;
-            output += shapesZoneAnalyzer.modalSplitInZone(persons5050);
+
+            for (Id<Person> personId : persons5050.keySet()){
+                personsAlongM10.put(personId, persons5050.get(personId));
+            }
 
 
+           // output+="\n\n" + i;
+            //output += shapesZoneAnalyzer.modalSplitInZone(persons5050);
         }
+
+        output = shapesZoneAnalyzer.modalSplitInZone(personsAlongM10);
 
 
         try {
