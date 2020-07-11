@@ -176,30 +176,66 @@ public class ExtendedShapeZoneAnalyser {
                     }
                 }
 
-               /* int index = personPlanElements.indexOf(activityInShape);
+               int index = personPlanElements.indexOf(activityInShape);
+
 
                 if (personPlanElements.get(index) instanceof Activity && !personsLegsList.isEmpty()) {
                     Activity personsActivity = (Activity) personPlanElements.get(index);
 
+
                     if (personsActivity.toString().equals(activityInShape.toString())) {
-                        total++;
 
-                        String mode = personsLegsList.get(legListSize-1).getMode();
-                        String previousMode = personsLegsList.get(legListSize-2).getMode();
+                        if (index != 0 && index != planElementsSize - 1) {
 
-                        if (mode == "walk" && previousMode != null) {
-                            Activity previousActivity = PopulationUtils.getPreviousActivity(plan, personsLegsList.get(legListSize-1));
-                            if (previousActivity.toString().contains("interaction")) {
-                                modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
-                            } else {
-                                modalsplit.put(mode, modalsplit.get(mode) + 1);
+                            int toLeg = personsLegsList.indexOf(PopulationUtils.getPreviousLeg(plan, personsActivity));
+
+                            String toMode = PopulationUtils.getPreviousLeg(plan, personsActivity).getMode();
+
+                            String previousMode = null;
+                            if(toLeg != 0) {
+                             previousMode = personsLegsList.get(toLeg - 1).getMode();
+
                             }
-                        } else {
-                            modalsplit.put(mode, modalsplit.get(mode) + 1);
-                        }
 
+                            int fromLeg = personsLegsList.indexOf(PopulationUtils.getNextLeg(plan, personsActivity));
+                            String fromMode = PopulationUtils.getNextLeg(plan, personsActivity).getMode();
+
+                            String nextMode = null;
+                            if (fromLeg !=personsLegsList.size()-1){
+                                 nextMode = personsLegsList.get(fromLeg + 1).getMode();
+
+                            }
+
+                            total++;
+                            total++;
+
+
+
+                            if (toMode == "walk" && previousMode != null) {
+                                Activity previousActivity = PopulationUtils.getPreviousActivity(plan, personsLegsList.get(toLeg));
+                                if (previousActivity.toString().contains("interaction")) {
+                                    modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
+                                } else {
+                                    modalsplit.put(toMode, modalsplit.get(toMode) + 1);
+                                }
+                            } else {
+                                modalsplit.put(toMode, modalsplit.get(toMode) + 1);
+                            }
+
+                            if (fromMode == "walk" && nextMode != null) {
+                                Activity nextActivity = PopulationUtils.getNextActivity(plan, personsLegsList.get(fromLeg));
+                                if (nextActivity.toString().contains("interaction")) {
+                                    modalsplit.put(nextMode, modalsplit.get(nextMode) + 1);
+                                } else {
+                                    modalsplit.put(fromMode, modalsplit.get(fromMode) + 1);
+                                }
+                            } else {
+                                modalsplit.put(fromMode, modalsplit.get(fromMode) + 1);
+                            }
+
+                        }
                     }
-                }*/
+                }
 
             }
 

@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class ExtendedRunModalShapeAnalyser {
         ExtendedShapeZoneAnalyser shapesZoneAnalyzer = new ExtendedShapeZoneAnalyser(config, scenario, shapeFile);
 
 
-        int [] extendedArea = {60, 65,61,66,53,55,54,287,289,283,280,51};
+        int[] extendedArea = {60, 65, 61, 66, 53, 55, 54, 287, 289, 283, 280, 51};
         Map<Id<Person>, List<Activity>> personsAlongM10 = new HashMap<>();
 
 
@@ -46,14 +47,25 @@ public class ExtendedRunModalShapeAnalyser {
         for (int i : extendedArea) {
             Map<Id<Person>, List<Activity>> persons5050 = shapesZoneAnalyzer.getPersonsWithActivityInShape(i);
 
-            for (Id<Person> personId : persons5050.keySet()){
-                personsAlongM10.put(personId, persons5050.get(personId));
+            for (Id<Person> personId : persons5050.keySet()) {
+                if (personsAlongM10.containsKey(personId)) {
+                    List<Activity> globalactivityList = personsAlongM10.get(personId);
+                    List<Activity> localActivityList = persons5050.get(personId);
+                    for (Activity activity : localActivityList) {
+                        globalactivityList.add(activity);
+                    }
+                    personsAlongM10.put(personId, globalactivityList);
+                } else {
+                    personsAlongM10.put(personId, persons5050.get(personId));
+                }
             }
 
-
-            // output+="\n\n" + i;
-            //output += shapesZoneAnalyzer.modalSplitInZone(persons5050);
         }
+
+
+        // output+="\n\n" + i;
+        //output += shapesZoneAnalyzer.modalSplitInZone(persons5050);
+
         System.out.println("Population: " + personsAlongM10.size());
 
         output = shapesZoneAnalyzer.modalSplitInZone(personsAlongM10);
@@ -64,10 +76,11 @@ public class ExtendedRunModalShapeAnalyser {
             writer = new BufferedWriter(fileWriter);
             writer.write(output);
             writer.close();
-        } catch(IOException ee){
+        } catch (IOException ee) {
             throw new RuntimeException(ee);
         }
         System.out.println("\nDONE!\n###\n");
     }
 }
+
 
