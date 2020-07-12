@@ -4,10 +4,7 @@ import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.network.Node;
-import org.matsim.pt.transitSchedule.api.TransitRouteStop;
-import org.matsim.pt.transitSchedule.api.TransitSchedule;
-import org.matsim.pt.transitSchedule.api.TransitScheduleFactory;
-import org.matsim.pt.transitSchedule.api.TransitStopFacility;
+import org.matsim.pt.transitSchedule.api.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +12,18 @@ import java.util.List;
 import java.util.Map;
 
 public class TransitRouteStopBuilder {
+
+    Map<String,List<TransitRouteStop>> TRStops = new HashMap<>();
+
+    Map<String,List<TransitRouteStop>> getTRStops(){
+        if(!TRStops.isEmpty()){
+            return TRStops;
+        }
+        else {
+            System.out.println("ERROR! Build TransitRouteStops first!");
+            return null;
+        }
+    }
 
     Map<String,List<TransitRouteStop>> build(List<Node> nodeList, Map<Node, String> nodeMap, Map<String,List<Id<Link>>> links, TransitSchedule tschedule){
         int size = nodeList.size();
@@ -40,10 +49,17 @@ public class TransitRouteStopBuilder {
             String stopname = nodeMap.get(nodeList.get(i));
             Coord tscoord = nodeList.get(i).getCoord();
 
+            /** Some helpful hints:
+             * i=0: Warschauer Str. ARRIVING (only DW)
+             * i=1: Warschauer Str. DEPARTING (only WD)
+             * i=*: Other stops (both)
+             * */
+
             if(i!=0) {
 
                 if (tsfacilities.containsKey(Id.create(stopFacilityKeyWD, TransitRouteStop.class))) {
                     stopFacilityWD = tsfacilities.get(Id.create(stopFacilityKeyWD, TransitRouteStop.class));
+                    // stopFacilityWD.setStopAreaId(Id.create("456789123", TransitStopArea.class));  // to test StopAreaId-function -> is not part of printout!
                     stopname = stopFacilityWD.getName();
                 } else {
                     Id<Link> reflinkWD = links.get("WD").get(i);
@@ -52,12 +68,13 @@ public class TransitRouteStopBuilder {
                     stopFacilityWD.setName(stopname);
                     tschedule.addStopFacility(stopFacilityWD);
                 }
-                TransitRouteStop stopWD = tsfactory.createTransitRouteStop(stopFacilityWD, 60. * (i-1), (60. + 5) * (i-1));
+                System.out.println("TSFACILITIY WD-"+i+": "+stopFacilityWD);  // for troubleshooting on TransitStopFacilities
+                TransitRouteStop stopWD = tsfactory.createTransitRouteStop(stopFacilityWD, 60. * (i-1), (60. * (i-1))+5);
                 stopsM10WD.add(i-1, stopWD);
                 //System.out.println("LIST WD: " + stopsM10WD); // for troubleshooting
             } else{
                 stopFacilityDW = tsfacilities.get(Id.create(stopFacilityKeyWD, TransitRouteStop.class));
-                TransitRouteStop stopDW = tsfactory.createTransitRouteStop(stopFacilityDW, 60. * (size - 1 - i), (60. + 5) * (size - 1 - i));
+                TransitRouteStop stopDW = tsfactory.createTransitRouteStop(stopFacilityDW, 60. * (size - 2), (60. * (size - 2))+5);
                 stopsM10DW.set(size - i - 2, stopDW);
                 // System.out.println("LIST DW: "+stopsM10DW); // gives errormessage due to null-dummys
                 continue;
@@ -70,15 +87,19 @@ public class TransitRouteStopBuilder {
                     Id<Link> reflinkDW = links.get("DW").get(i);
                     stopFacilityDW = createTransitStopFacility(tscoord, reflinkDW, tschedule, stopFacilityKeyDW);
                     stopFacilityDW.setName(stopname);
+                    if(stopAreaIdExists(stopFacilityWD)) { stopFacilityDW.setStopAreaId(stopFacilityWD.getStopAreaId()); }
                     tschedule.addStopFacility(stopFacilityDW);
                 }
-                TransitRouteStop stopDW = tsfactory.createTransitRouteStop(stopFacilityDW, 60. * (size - 1 - i), (60. + 5) * (size - 1 - i));
+                System.out.println("TSFACILITIY DW-"+i+": "+stopFacilityDW);  // for troubleshooting on TransitStopFacilities
+                TransitRouteStop stopDW = tsfactory.createTransitRouteStop(stopFacilityDW, 60. * (size - 1 - i), (60. * (size - 1 - i))+5);
+
                 stopsM10DW.set(size - i - 1, stopDW);
                 //System.out.println("LIST DW: "+stopsM10DW);
             }
         }
-        //System.out.println("STOPLIST WD: "+stopsM10WD);  // for troubleshooting
-        //System.out.println("STOPLIST DW: "+stopsM10DW);   // for troubleshooting
+        System.out.println("STOPLIST WD: "+stopsM10WD);  // for troubleshooting on TransitRouteStops
+        System.out.println("STOPLIST DW: "+stopsM10DW);   // for troubleshooting on TransitRouteStops
+        TRStops = trstops;
 
         return trstops;
     }
@@ -95,6 +116,15 @@ public class TransitRouteStopBuilder {
 
         System.out.println("\tDone!");
         return newStopFacility;
+    }
+
+    boolean stopAreaIdExists(TransitStopFacility tsfacility){
+        if(tsfacility.getStopAreaId()!=null){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
 

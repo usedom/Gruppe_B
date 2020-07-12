@@ -15,11 +15,18 @@ import java.util.Map;
 
 public class TramNetworkBuilder {
 
-   /*
-    public TramNetworkBuilder(){
+    Map<String, List<Id<Link>>> NWLinks = new HashMap<>();
 
+    Map<String, List<Id<Link>>> getNWLinks(){
+        if(!NWLinks.isEmpty()){
+            return NWLinks;
+        }
+        else {
+            System.out.println("ERROR! Build TramNetwork first!");
+            return null;
+        }
     }
-*/
+
    Map<String, List<Id<Link>>> build(Network network, List<Node> nodeList, String outputNetwork) {
         int size=nodeList.size();
         List<Id<Link>> m10links_WD = new ArrayList<>();
@@ -60,6 +67,9 @@ public class TramNetworkBuilder {
         }
 
         new NetworkWriter(network).write(outputNetwork);
+
+        NWLinks = links;
+
         return links;
     }
 
