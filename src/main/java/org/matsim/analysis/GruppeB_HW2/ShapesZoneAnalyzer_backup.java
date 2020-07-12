@@ -1,40 +1,85 @@
-package org.matsim.analysis.gruppeB;
+package org.matsim.analysis.GruppeB_HW2;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.population.*;
 import org.matsim.core.config.Config;
 import org.matsim.core.population.PopulationUtils;
+import org.matsim.core.utils.geometry.geotools.MGC;
+import org.matsim.core.utils.gis.ShapeFileReader;
+import org.opengis.feature.simple.SimpleFeature;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GridZoneAnalyzer {
+public class ShapesZoneAnalyzer_backup {
 
     Config config;
     Scenario scenario;
+    String shapeFile;
 
-    public GridZoneAnalyzer(Config config, Scenario scenario){
+    public ShapesZoneAnalyzer_backup(Config config, Scenario scenario, String shapeFile){
         this.config = config;
         this.scenario = scenario;
+        this.shapeFile = shapeFile;
     }
 
 
-    public Map<Id<Person>, Coord> getPersonsHomeInZone(Map<String, Integer> zone){
-        int x1 = zone.get("x_start");
-        int y1 = zone.get("y_start");
-        int x2 = zone.get("x_end");
-        int y2 = zone.get("y_end");
+
+
+  /*
+
+        File input =  new File("scenarios/berlin-v5.5-1pct/input/berlin-matsim-v5.5-network.xml.gz");
+        String output = "scenarios/berlin-v5.5-1pct/input/shapes-matsim-berlin-network.xml.gz";
+        String shapes = "scenarios/berlin-v5.5-1pct/input/BerlinPlanungsraeumeLOR.shp";
+
+        try{
+            URL url = new URL("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-10pct/input/berlin-v5.5-network.xml.gz");
+
+            FileUtils.copyURLToFile(url, input);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Network network = NetworkUtils.createNetwork();
+        new MatsimNetworkReader(network).readFile(String.valueOf(input));
+
+
+        Collection<SimpleFeature> simpleFeatures = (new ShapeFileReader()).readFileAndInitialize(shapes);
+        Map<String, Geometry> zones = new HashMap<>();
+
+        for (SimpleFeature simpleFeature: simpleFeatures) {
+
+            zones.put((String) simpleFeature.getAttribute("OBJECTID"), (Geometry) simpleFeature.getDefaultGeometry());
+        }*/
+
+    public Map<Id<Person>, Coord> getPersonsHomeInShape(Integer shapeId){
+
+        Collection<SimpleFeature> simpleFeatures = (new ShapeFileReader()).readFileAndInitialize(shapeFile);
+        Map<Integer, Geometry> zones = new HashMap<>();
+
+        for (SimpleFeature simpleFeature: simpleFeatures) {
+
+            zones.put((Integer) simpleFeature.getAttribute("FID"), (Geometry) simpleFeature.getDefaultGeometry());
+        }
+
+        Geometry lor = zones.get(shapeId);
 
         Map<Id<Person>, Coord> zonepersons = new HashMap<>();
+
+
 
         // Population population = PopulationUtils.readPopulation("output_ori050/berlin-v5.5-1pct.output_plans.xml.gz");
 
         // get ALL persons living in network
         Population population = scenario.getPopulation();
         Map<Id<Person>, ? extends Person> personmap = population.getPersons();
+
         for(Id<Person> id:personmap.keySet()){
             Person p = PopulationUtils.findPerson(id, scenario);
             Plan plan = p.getSelectedPlan();
@@ -42,12 +87,16 @@ public class GridZoneAnalyzer {
 
             // get persons in our zone/cell into Map
             double x_home = firstActivity.getCoord().getX();
-            if(x1 <= x_home && x_home <= x2){
-                double y_home = firstActivity.getCoord().getY();
-                if(y1 <= y_home && y_home <= y2){
+            double y_home = firstActivity.getCoord().getY();
+            Point personPoint = MGC.xy2Point(x_home, y_home);
+
+
+
+
+            if (lor.contains(personPoint)){
                     zonepersons.put(id,firstActivity.getCoord());
                 }
-            }
+
         }
         return zonepersons;
         /*
@@ -69,7 +118,7 @@ public class GridZoneAnalyzer {
         */
     }
 
-    public void modalSplitInZone(Map<Id<Person>, Coord> input){
+    public String modalSplitInZone(Map<Id<Person>, Coord> input){
 
         Map<String, Integer> modalsplit = new HashMap<>();
         int count_pt = 0, count_car = 0, count_bike = 0, count_walk = 0, count_ride = 0, total = 0;
@@ -133,10 +182,19 @@ public class GridZoneAnalyzer {
 
         // Print out message with modal split statistics...
         System.out.println("I count the following legs:");
+        String output = "";
         for(String s:modalsplit.keySet()){
             double relative = Double.valueOf(modalsplit.get(s))/total;
             System.out.println(s+":\t"+modalsplit.get(s)+"\t("+ relative*100 +" %)");
+            output+=(s+":\t"+modalsplit.get(s)+"\t("+ relative*100 +" %)" +"\n");
         }
         System.out.println("### DONE! ###");
+        return output;
     }
 }
+
+
+
+
+
+

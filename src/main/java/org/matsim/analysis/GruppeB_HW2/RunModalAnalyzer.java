@@ -1,4 +1,4 @@
-package org.matsim.analysis.gruppeB;
+package org.matsim.analysis.GruppeB_HW2;
 
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
@@ -16,7 +16,7 @@ public class RunModalAnalyzer {
         // Uncomment line below to printout your root folder
         System.out.println(System.getProperty("user.dir"));
 
-        String configFile = "output_ori050/berlin-v5.5-1pct.output_config.xml";
+        String configFile = "outputs/output_ori050/berlin-v5.5-1pct.output_config.xml";
         Config config = ConfigUtils.loadConfig(configFile);
 
         Grid grid = new Grid(100);

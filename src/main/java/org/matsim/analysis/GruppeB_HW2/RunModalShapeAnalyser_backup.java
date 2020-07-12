@@ -1,4 +1,4 @@
-package org.matsim.analysis.gruppeB;
+package org.matsim.analysis.GruppeB_HW2;
 
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;

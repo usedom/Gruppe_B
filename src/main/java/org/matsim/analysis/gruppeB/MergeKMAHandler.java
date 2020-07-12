@@ -19,7 +19,7 @@ public class MergeKMAHandler {
 
         String kma_mod_west_enter = System.getProperty("user.dir")+"agents entering KMA_mod on west link 97508.txt";
         String kma_mod_east_enter = System.getProperty("user.dir")+"agents entering KMA_mod on east link 54738.txt";
-        String kma_mod_west_leave = System.getProperty("user.dir")+"agents leaving KMA_mod on west link 126333.txt";
+        String kma_mod_west_leave = System.getProperty("user.dir")  +"agents leaving KMA_mod on west link 126333.txt";
         String kma_mod_east_leave = System.getProperty("user.dir")+"agents leaving KMA_mod on east link 99708.txt";
 
         HandleKMAPersonLists mergeKM = new HandleKMAPersonLists();
