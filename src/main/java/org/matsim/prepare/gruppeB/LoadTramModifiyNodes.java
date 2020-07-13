@@ -31,7 +31,7 @@ public class LoadTramModifiyNodes {
     List<Node> getList(int choice) {
     System.out.println("\t\tGetting list of Nodes ... ");
 
-        return inputnodes;
+    return inputnodes;
     }
 
     Map<Node, String> getMap(int choice, TransitSchedule tschedule) {
