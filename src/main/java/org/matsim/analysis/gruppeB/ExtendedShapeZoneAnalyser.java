@@ -104,7 +104,7 @@ public class ExtendedShapeZoneAnalyser {
     public String modalSplitInZone(Map<Id<Person>, List<Activity>> input) {
 
         Map<String, Integer> modalsplit = new HashMap<>();
-        int count_pt = 0, count_car = 0, count_bike = 0, count_walk = 0, count_ride = 0, total = 0;
+        int count_pt = 0, count_car = 0, count_bike = 0, count_walk = 0, count_ride = 0, total_count = 0;
         modalsplit.put("pt", count_pt);
         modalsplit.put("car", count_car);
         modalsplit.put("bicycle", count_bike);
@@ -117,8 +117,10 @@ public class ExtendedShapeZoneAnalyser {
         for (Id<Person> id : input.keySet()) {
             Person p = PopulationUtils.findPerson(id, scenario);
             Plan plan = p.getSelectedPlan();
-            List<Activity> activityListInShape = input.get(id);
+            List<Activity> activityListOfPersonInRegion = input.get(id);
+            System.out.println("Activities in Zone: " + activityListOfPersonInRegion.size());
             List<Leg> personsLegsList = PopulationUtils.getLegs(plan);
+            List<Leg> legsAlreadyAnalysed = new ArrayList<>();
             List<PlanElement> personPlanElements = plan.getPlanElements();
 
             int planElementsSize = personPlanElements.size();
@@ -126,15 +128,16 @@ public class ExtendedShapeZoneAnalyser {
 
 
 
-            for (Activity activityInShape : activityListInShape) {
+            for (Activity activityInShape : activityListOfPersonInRegion) {
 
                 //Code for the first activity of the day
                 if (personPlanElements.get(0) instanceof Activity && !personsLegsList.isEmpty()) {
                     Activity personsFirstActivity = (Activity) personPlanElements.get(0);
-                    Activity p1Activity = PopulationUtils.getFirstActivity(plan);
+
+
 
                     if (personsFirstActivity.toString().equals(activityInShape.toString())) {
-                        total++;
+                        total_count++;
 
                         String mode = personsLegsList.get(0).getMode();
                         String nextmode = personsLegsList.get(1).getMode();
@@ -143,11 +146,17 @@ public class ExtendedShapeZoneAnalyser {
                             Activity nextactivity = PopulationUtils.getNextActivity(plan, personsLegsList.get(0));
                             if (nextactivity.toString().contains("interaction")) {
                                 modalsplit.put(nextmode, modalsplit.get(nextmode) + 1);
+                                legsAlreadyAnalysed.add(personsLegsList.get(1));
+
                             } else {
                                 modalsplit.put(mode, modalsplit.get(mode) + 1);
+                                legsAlreadyAnalysed.add(personsLegsList.get(0));
+
                             }
                         } else {
                             modalsplit.put(mode, modalsplit.get(mode) + 1);
+                            legsAlreadyAnalysed.add(personsLegsList.get(0));
+
                         }
 
                     }
@@ -157,20 +166,31 @@ public class ExtendedShapeZoneAnalyser {
                     Activity personsLastActivity = (Activity) personPlanElements.get(planElementsSize-1);
 
                     if (personsLastActivity.toString().equals(activityInShape.toString())) {
-                        total++;
 
                         String mode = personsLegsList.get(legListSize-1).getMode();
                         String previousMode = personsLegsList.get(legListSize-2).getMode();
 
                         if (mode == "walk" && previousMode != null) {
                             Activity previousActivity = PopulationUtils.getPreviousActivity(plan, personsLegsList.get(legListSize-1));
-                            if (previousActivity.toString().contains("interaction")) {
+                            if (previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(legListSize-2))) {
                                 modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
-                            } else {
+                                legsAlreadyAnalysed.add(personsLegsList.get(legListSize-2));
+                                total_count++;
+
+
+                            } else if (!legsAlreadyAnalysed.contains(personsLegsList.get(legListSize-1))){
                                 modalsplit.put(mode, modalsplit.get(mode) + 1);
+                                legsAlreadyAnalysed.add(personsLegsList.get(legListSize-1));
+                                total_count++;
+
+
+
                             }
-                        } else {
+                        } else if (!legsAlreadyAnalysed.contains(personsLegsList.get(legListSize-1))){
                             modalsplit.put(mode, modalsplit.get(mode) + 1);
+                            legsAlreadyAnalysed.add(personsLegsList.get(legListSize-1));
+                            total_count++;
+
                         }
 
                     }
@@ -180,16 +200,17 @@ public class ExtendedShapeZoneAnalyser {
 
 
                 if (personPlanElements.get(index) instanceof Activity && !personsLegsList.isEmpty()) {
-                    Activity personsActivity = (Activity) personPlanElements.get(index);
+                    Activity personsWithinActivity = (Activity) personPlanElements.get(index);
 
 
-                    if (personsActivity.toString().equals(activityInShape.toString())) {
+                    if (personsWithinActivity.toString().equals(activityInShape.toString())) {
 
+                        //could be earlier
                         if (index != 0 && index != planElementsSize - 1) {
 
-                            int toLeg = personsLegsList.indexOf(PopulationUtils.getPreviousLeg(plan, personsActivity));
+                            int toLeg = personsLegsList.indexOf(PopulationUtils.getPreviousLeg(plan, personsWithinActivity));
 
-                            String toMode = PopulationUtils.getPreviousLeg(plan, personsActivity).getMode();
+                            String toMode = PopulationUtils.getPreviousLeg(plan, personsWithinActivity).getMode();
 
                             String previousMode = null;
                             if(toLeg != 0) {
@@ -197,8 +218,8 @@ public class ExtendedShapeZoneAnalyser {
 
                             }
 
-                            int fromLeg = personsLegsList.indexOf(PopulationUtils.getNextLeg(plan, personsActivity));
-                            String fromMode = PopulationUtils.getNextLeg(plan, personsActivity).getMode();
+                            int fromLeg = personsLegsList.indexOf(PopulationUtils.getNextLeg(plan, personsWithinActivity));
+                            String fromMode = PopulationUtils.getNextLeg(plan, personsWithinActivity).getMode();
 
                             String nextMode = null;
                             if (fromLeg !=personsLegsList.size()-1){
@@ -206,44 +227,63 @@ public class ExtendedShapeZoneAnalyser {
 
                             }
 
-                            total++;
-                            total++;
+
+
 
 
 
                             if (toMode == "walk" && previousMode != null) {
                                 Activity previousActivity = PopulationUtils.getPreviousActivity(plan, personsLegsList.get(toLeg));
-                                if (previousActivity.toString().contains("interaction")) {
+                                if (previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(toLeg-1))) {
                                     modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
-                                } else {
+                                    legsAlreadyAnalysed.add(personsLegsList.get(toLeg-1));
+                                    total_count++;
+
+                                } else if (!legsAlreadyAnalysed.contains(personsLegsList.get(toLeg))) {
                                     modalsplit.put(toMode, modalsplit.get(toMode) + 1);
+                                    legsAlreadyAnalysed.add(personsLegsList.get(toLeg));
+                                    total_count++;
+
                                 }
-                            } else {
+                            } else if (!legsAlreadyAnalysed.contains(personsLegsList.get(toLeg))) {
                                 modalsplit.put(toMode, modalsplit.get(toMode) + 1);
+                                legsAlreadyAnalysed.add(personsLegsList.get(toLeg));
+                                total_count++;
+
                             }
 
                             if (fromMode == "walk" && nextMode != null) {
                                 Activity nextActivity = PopulationUtils.getNextActivity(plan, personsLegsList.get(fromLeg));
-                                if (nextActivity.toString().contains("interaction")) {
+                                if (nextActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(fromLeg+1))) {
                                     modalsplit.put(nextMode, modalsplit.get(nextMode) + 1);
-                                } else {
+                                    legsAlreadyAnalysed.add(personsLegsList.get(fromLeg+1));
+                                    total_count++;
+
+                                } else if (!legsAlreadyAnalysed.contains(personsLegsList.get(fromLeg))) {
                                     modalsplit.put(fromMode, modalsplit.get(fromMode) + 1);
+                                    legsAlreadyAnalysed.add(personsLegsList.get(fromLeg));
+                                    total_count++;
+
                                 }
-                            } else {
+                            } else if(!legsAlreadyAnalysed.contains(personsLegsList.get(fromLeg))) {
                                 modalsplit.put(fromMode, modalsplit.get(fromMode) + 1);
+                                legsAlreadyAnalysed.add(personsLegsList.get(fromLeg));
+                                total_count++;
+
                             }
 
                         }
                     }
                 }
 
+                System.out.println("Legs counted: "legsAlreadyAnalysed.size());
             }
 
         }
         System.out.println("[ " + n + " ] " + "I count the following legs:");
         //String output = "";
         for (String s : modalsplit.keySet()) {
-            double relative = Double.valueOf(modalsplit.get(s)) / total;
+            double relative = Double.valueOf(modalsplit.get(s)) / total_count;
             System.out.println(s + ":\t" + modalsplit.get(s) + "\t(" + relative * 100 + " %)");
             output += (s + ":\t" + modalsplit.get(s) + "\t(" + relative * 100 + " %)" + "\n");
         }
