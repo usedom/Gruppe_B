@@ -27,7 +27,7 @@ public class ExtendedRunModalShapeAnalyser {
         System.out.println(System.getProperty("user.dir"));
 
         String configFile = "outputs/output_ori050/berlin-v5.5-1pct.output_config.xml";
-        String outputTxt = "gruppeB_TXSandCSV/ForMarcel.txt";
+        String outputTxt = "gruppeB_TXSandCSV/ForMarcelWithCheckModeCheck.txt";
         String shapeFile = "scenarios/berlin-v5.5-1pct/input/LOR_new.shp";
 
 
