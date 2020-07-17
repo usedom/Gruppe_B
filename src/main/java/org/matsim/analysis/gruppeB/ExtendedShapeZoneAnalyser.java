@@ -118,7 +118,7 @@ public class ExtendedShapeZoneAnalyser {
             Person p = PopulationUtils.findPerson(id, scenario);
             Plan plan = p.getSelectedPlan();
             List<Activity> activityListOfPersonInRegion = input.get(id);
-            System.out.println("Activities in Zone: " + activityListOfPersonInRegion.size());
+            System.out.println("Activities in Zone: " + activityListOfPersonInRegion.size() + " " + id);
             System.out.println(activityListOfPersonInRegion);
             List<Leg> personsLegsList = PopulationUtils.getLegs(plan);
             List<Leg> legsAlreadyAnalysed = new ArrayList<>();
@@ -136,180 +136,153 @@ public class ExtendedShapeZoneAnalyser {
                     if (personsFirstActivity.toString().equals(activityInShape.toString())) {
                         total_count++;
 
+
                         String mode = personsLegsList.get(0).getMode();
                         String nextmode = personsLegsList.get(1).getMode();
 
-                        /**why do we check modes here?*/
-                        //checking that the persons has a next Mode
-                        if (/*(mode == "walk" || mode == "bicycle") && */nextmode != null) {
-                            Activity nextactivity = PopulationUtils.getNextActivity(plan, personsLegsList.get(0));
+                        Activity nextactivity = PopulationUtils.getNextActivity(plan, personsLegsList.get(0));
 
-                            //checking that after the activity is an interaction activity, than the leg after the interaction is anlysed
-                            if (nextactivity.toString().contains("interaction")) {
-                                modalsplit.put(nextmode, modalsplit.get(nextmode) + 1);
-                                legsAlreadyAnalysed.add(personsLegsList.get(1));
-                                break;
+                        //checking that after the activity is an interaction activity, than the leg after the interaction is anlysed
+                        if (nextactivity.toString().contains("interaction")) {
+                            modalsplit.put(nextmode, modalsplit.get(nextmode) + 1);
+                            legsAlreadyAnalysed.add(personsLegsList.get(1));
+                            // continue;
 
                             // code is executed when the next activity is a regular activity, meaning that persons walks or cycles
-                            } else {
-                                modalsplit.put(mode, modalsplit.get(mode) + 1);
-                                legsAlreadyAnalysed.add(personsLegsList.get(0));
-                                break;
-
-                            }
-
-
-                          /**Questionable, because first activity*/
-                         // executed, when there is only one leg and nextmode is null
                         } else {
                             modalsplit.put(mode, modalsplit.get(mode) + 1);
                             legsAlreadyAnalysed.add(personsLegsList.get(0));
-                            break;
+                            //continue;
 
                         }
 
                     }
                 }
 
-              //Analysing persons last activities , persons LegList can be empty in case person does not leave their homes
-               if (personPlanElements.get(planElementsSize-1) instanceof Activity && !personsLegsList.isEmpty()) {
-                    Activity personsLastActivity = (Activity) personPlanElements.get(planElementsSize-1);
+                //Analysing persons last activities , persons LegList can be empty in case person does not leave their homes
+                if (personPlanElements.get(planElementsSize - 1) instanceof Activity && !personsLegsList.isEmpty()) {
+                    Activity personsLastActivity = (Activity) personPlanElements.get(planElementsSize - 1);
 
                     if (personsLastActivity.toString().equals(activityInShape.toString())) {
 
-                        String mode = personsLegsList.get(legListSize-1).getMode();
-                        String previousMode = personsLegsList.get(legListSize-2).getMode();
+                        String mode = personsLegsList.get(legListSize - 1).getMode();
+                        String previousMode = personsLegsList.get(legListSize - 2).getMode();
 
-                       /**Questionable, because if person moves it has at least two legs*/
-                        if (/*(mode == "walk" || mode == "bicycle") &&*/ previousMode != null) {
-                            Activity previousActivity = PopulationUtils.getPreviousActivity(plan, personsLegsList.get(legListSize-1));
+                        Activity previousActivity = PopulationUtils.getPreviousActivity(plan, personsLegsList.get(legListSize - 1));
 
-                           //if previousActivity is an interaction, we analyse the leg before
-                            if (previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(legListSize-2))) {
-                                modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
-                                legsAlreadyAnalysed.add(personsLegsList.get(legListSize-2));
-                                total_count++;
-                                break;
-
-                                // if previousActivity is regular, the last leg is analysed
-                            } else if (!previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(legListSize-1))){
-                                modalsplit.put(mode, modalsplit.get(mode) + 1);
-                                legsAlreadyAnalysed.add(personsLegsList.get(legListSize-1));
-                                total_count++;
-                                break;
-
-
-
-                            }
-
-                            /**Questionable*/
-                        } else if (!legsAlreadyAnalysed.contains(personsLegsList.get(legListSize-1))){
-                            modalsplit.put(mode, modalsplit.get(mode) + 1);
-                            legsAlreadyAnalysed.add(personsLegsList.get(legListSize-1));
+                        //if previousActivity is an interaction, we analyse the leg before
+                        if (previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(legListSize - 2))) {
+                            modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
+                            legsAlreadyAnalysed.add(personsLegsList.get(legListSize - 2));
                             total_count++;
-                            break;
+                            //             continue;
+
+                            // if previousActivity is regular, the last leg is analysed
+                        } else if (!previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(legListSize - 1))) {
+                            modalsplit.put(mode, modalsplit.get(mode) + 1);
+                            legsAlreadyAnalysed.add(personsLegsList.get(legListSize - 1));
+                            total_count++;
+                            //      continue;
+
 
                         }
+
 
                     }
                 }
 
-               /**Activity in Region with leg before and after*/
-               int index = personPlanElements.indexOf(activityInShape);
+                /**Activity in Region with leg before and after*/
+                int index = personPlanElements.indexOf(activityInShape);
+                System.out.println(index);
 
-               //check that not last or first activity are analysed
-               if (index != 0 && index != planElementsSize - 1) {
+                //check that not last or first activity are analysed
+                if (index != 0 && index != planElementsSize - 1) {
 
-                    //if (personPlanElements.get(index) instanceof Activity && !personsLegsList.isEmpty()) {
+               //cast to Activity is possible because of line 195
                     Activity personsWithinActivity = (Activity) personPlanElements.get(index);
 
 
-                    //could be allready checked line 201 an 198
-                   // if (personsWithinActivity.toString().equals(activityInShape.toString())) {
 
-                        //could be earlier
+                    int previousLegIndex = personsLegsList.indexOf(PopulationUtils.getPreviousLeg(plan, personsWithinActivity));
 
-                            int previousLegIndex = personsLegsList.indexOf(PopulationUtils.getPreviousLeg(plan, personsWithinActivity));
+                    String previousMode = PopulationUtils.getPreviousLeg(plan, personsWithinActivity).getMode();
 
-                            String previousMode = PopulationUtils.getPreviousLeg(plan, personsWithinActivity).getMode();
+                    //if person is walking or cycling into the region there is no previousPreviousMode
+                    String previousPreviousMode = null;
+                    if (previousLegIndex != 0) {
+                        previousPreviousMode = personsLegsList.get(previousLegIndex - 1).getMode();
 
-                            //if person is walking or cycling into the region there is no previousPreviousMode
-                            String previousPreviousMode = null;
-                            if(previousLegIndex != 0) {
-                             previousPreviousMode = personsLegsList.get(previousLegIndex - 1).getMode();
+                    }
 
-                            }
+                    int nextLegIndex = personsLegsList.indexOf(PopulationUtils.getNextLeg(plan, personsWithinActivity));
+                    String nextMode = PopulationUtils.getNextLeg(plan, personsWithinActivity).getMode();
 
-                            int nextLegIndex = personsLegsList.indexOf(PopulationUtils.getNextLeg(plan, personsWithinActivity));
-                            String nextMode = PopulationUtils.getNextLeg(plan, personsWithinActivity).getMode();
+                    //if person is walking or cycling out of the region there is no nextNExtMode
 
-                             //if person is walking or cycling out of the region there is no nextNExtMode
+                    String nextNextMode = null;
+                    if (nextLegIndex != personsLegsList.size() - 1) {
+                        nextNextMode = personsLegsList.get(nextLegIndex + 1).getMode();
 
-                            String nextNextMode = null;
-                            if (nextLegIndex !=personsLegsList.size()-1){
-                                 nextNextMode = personsLegsList.get(nextLegIndex + 1).getMode();
+                    }
 
-                            }
+                    //previousMode will always be walk or bicycle and there is a previouspreviousMode (
+                    if (/*(previousMode == "walk" || previousMode == "bicycle") &&*/ previousPreviousMode != null) {
+                        Activity previousActivity = PopulationUtils.getPreviousActivity(plan, personsLegsList.get(previousLegIndex));
 
-                            //previousMode will always be walk or bicycle and there is a previouspreviousMode (
-                            if (/*(previousMode == "walk" || previousMode == "bicycle") &&*/ previousPreviousMode != null) {
-                                Activity previousActivity = PopulationUtils.getPreviousActivity(plan, personsLegsList.get(previousLegIndex));
-
-                                //if the previousActivity is an interaction, the leg before this interaction (previousprevious) is analysed
-                                if (previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(previousLegIndex-1))) {
-                                    modalsplit.put(previousPreviousMode, modalsplit.get(previousPreviousMode) + 1);
-                                    legsAlreadyAnalysed.add(personsLegsList.get(previousLegIndex-1));
-                                    total_count++;
+                        //if the previousActivity is an interaction, the leg before this interaction (previousprevious) is analysed
+                        if (previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(previousLegIndex - 1))) {
+                            modalsplit.put(previousPreviousMode, modalsplit.get(previousPreviousMode) + 1);
+                            legsAlreadyAnalysed.add(personsLegsList.get(previousLegIndex - 1));
+                            total_count++;
 
 
-
-                                  //if previous Activity is a regular activity the previousLeg is analysed (previousPrevious is without interest)
-                                } else if (!previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(previousLegIndex))) {
-                                    modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
-                                    legsAlreadyAnalysed.add(personsLegsList.get(previousLegIndex));
-                                    total_count++;
-
-                                }
-
-
-                             // we get here, when a person starts with a walk or bicycle directly in our region
-                            } else if (!legsAlreadyAnalysed.contains(personsLegsList.get(previousLegIndex))) {
-                                modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
-                                legsAlreadyAnalysed.add(personsLegsList.get(previousLegIndex));
-                                total_count++;
-
-                            }
-                                //checking there is a nextNextMode
-                            if (/*(nextMode == "walk" || nextMode == "bicycle") && */nextNextMode != null) {
-                                Activity nextActivity = PopulationUtils.getNextActivity(plan, personsLegsList.get(nextLegIndex));
-
-                                //if the nextActivity is interaction, the leg after the interactiojn (nextnext) is analysed
-                                if (nextActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(nextLegIndex+1))) {
-                                    modalsplit.put(nextNextMode, modalsplit.get(nextNextMode) + 1);
-                                    legsAlreadyAnalysed.add(personsLegsList.get(nextLegIndex+1));
-                                    total_count++;
-
-                                    //if next Activity is a regular, the nextLeg is anlysed (nextNext can be ignored)
-                                } else if (!nextActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(nextLegIndex))) {
-                                    modalsplit.put(nextMode, modalsplit.get(nextMode) + 1);
-                                    legsAlreadyAnalysed.add(personsLegsList.get(nextLegIndex));
-                                    total_count++;
-
-                                }
-
-                                //we get here, when person walks or cycles directly home
-                            } else if(!legsAlreadyAnalysed.contains(personsLegsList.get(nextLegIndex))) {
-                                modalsplit.put(nextMode, modalsplit.get(nextMode) + 1);
-                                legsAlreadyAnalysed.add(personsLegsList.get(nextLegIndex));
-                                total_count++;
-
-                            }
+                            //if previous Activity is a regular activity the previousLeg is analysed (previousPrevious is without interest)
+                        } else if (!previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(previousLegIndex))) {
+                            modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
+                            legsAlreadyAnalysed.add(personsLegsList.get(previousLegIndex));
+                            total_count++;
 
                         }
-                   // }
-              //  }
 
-                System.out.println("Legs counted: "+legsAlreadyAnalysed.size()+ " id: " + id);
+
+                        // we get here, when a person starts with a walk or bicycle directly in our region
+                    } else if (!legsAlreadyAnalysed.contains(personsLegsList.get(previousLegIndex))) {
+                        modalsplit.put(previousMode, modalsplit.get(previousMode) + 1);
+                        legsAlreadyAnalysed.add(personsLegsList.get(previousLegIndex));
+                        total_count++;
+
+                    }
+                    //checking there is a nextNextMode
+                    if (/*(nextMode == "walk" || nextMode == "bicycle") && */nextNextMode != null) {
+                        Activity nextActivity = PopulationUtils.getNextActivity(plan, personsLegsList.get(nextLegIndex));
+
+                        //if the nextActivity is interaction, the leg after the interactiojn (nextnext) is analysed
+                        if (nextActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(nextLegIndex + 1))) {
+                            modalsplit.put(nextNextMode, modalsplit.get(nextNextMode) + 1);
+                            legsAlreadyAnalysed.add(personsLegsList.get(nextLegIndex + 1));
+                            total_count++;
+
+                            //if next Activity is a regular, the nextLeg is anlysed (nextNext can be ignored)
+                        } else if (!nextActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(nextLegIndex))) {
+                            modalsplit.put(nextMode, modalsplit.get(nextMode) + 1);
+                            legsAlreadyAnalysed.add(personsLegsList.get(nextLegIndex));
+                            total_count++;
+
+                        }
+
+                        //we get here, when person walks or cycles directly home
+                    } else if (!legsAlreadyAnalysed.contains(personsLegsList.get(nextLegIndex))) {
+                        modalsplit.put(nextMode, modalsplit.get(nextMode) + 1);
+                        legsAlreadyAnalysed.add(personsLegsList.get(nextLegIndex));
+                        total_count++;
+
+                    }
+
+                }
+                // }
+                //  }
+
+                System.out.println("Legs counted: " + legsAlreadyAnalysed.size());
                 System.out.println(legsAlreadyAnalysed);
             }
 
