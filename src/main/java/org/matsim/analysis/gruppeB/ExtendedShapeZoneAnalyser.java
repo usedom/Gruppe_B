@@ -210,7 +210,6 @@ public class ExtendedShapeZoneAnalyser {
 
                 if (withinActivity) {
                     int index = personPlanElements.indexOf(activityInShape);
-                    System.out.println(index);
 
                     //check that not last or first activity are analysed
                     if (index != 0 && index != planElementsSize - 1) {
