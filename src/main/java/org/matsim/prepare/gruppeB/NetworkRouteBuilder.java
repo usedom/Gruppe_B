@@ -26,6 +26,7 @@ public class NetworkRouteBuilder {
     }
 
     Map<String, NetworkRoute> build(Scenario scenario, Map<String, List<Id<Link>>> links){
+        System.out.println("\tCreate NetworkRoutes with linkLists for both directions...");
 
         PopulationFactory pfactory = scenario.getPopulation().getFactory();
         Map<String, NetworkRoute> nwroutes = new HashMap<>(2);
@@ -33,6 +34,7 @@ public class NetworkRouteBuilder {
         // routeWD contains 4 links
         NetworkRoute routeWD = pfactory.getRouteFactories().createRoute(NetworkRoute.class, links.get("WD").get(0), links.get("WD").get(links.get("WD").size()-1));
         routeWD.setLinkIds(links.get("WD").get(0), links.get("WD").subList(1, links.get("WD").size()-1), links.get("WD").get(links.get("WD").size()-1));
+
         // routeDW contains turning link + 4 links
         NetworkRoute routeDW = pfactory.getRouteFactories().createRoute(NetworkRoute.class, links.get("DW").get(0), links.get("DW").get(links.get("DW").size()-1));
         routeDW.setLinkIds(links.get("DW").get(0), links.get("DW").subList(1, links.get("DW").size()-1), links.get("DW").get(links.get("DW").size()-1));

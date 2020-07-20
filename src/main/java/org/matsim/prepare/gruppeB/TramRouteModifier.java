@@ -13,6 +13,7 @@ import org.matsim.core.network.io.MatsimNetworkReader;
 import org.matsim.core.population.routes.NetworkRoute;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.pt.transitSchedule.api.*;
+import org.matsim.pt.utils.TransitScheduleValidator;
 import org.matsim.vehicles.VehiclesFactory;
 
 import java.io.File;
@@ -34,11 +35,11 @@ public class TramRouteModifier {
         final String OPT = String.valueOf(OPTION);
 
         /** Set input files */
-        // TO DO: Get these ALL as parameters from RunTramModifier, but does not exist yet...
-        // TO DO: Maybe also get networkFile locally and give as input from RunTramModifier...
-        String configFile = "scenarios/berlin-v5.5-1pct/input/berlin-v5.5-1pct.config.xml";
-        String outputNetwork = "scenarios/berlin-v5.5-1pct/input/tram_modified-cloned-berlin-matsim.xml.gz";
-        String outputSchedule = "scenarios/berlin-v5.5-1pct/input/M10_19new-transitSchedule.xml.gz";
+        // TODO: Get these ALL as parameters from RunTramModifier, but does not exist yet...
+        // TODO: Maybe also get networkFile locally and give as input from RunTramModifier...
+        String configFile = "scenarios/berlin-v5.5-1pct/input/berlin-v5.5-1pct.config_mod.xml";
+        String outputNetwork = "scenarios/berlin-v5.5-1pct/input/tram_v2-berlin-matsim.xml.gz";
+        String outputSchedule = "scenarios/berlin-v5.5-1pct/input/M10_WD-transitSchedule.xml.gz";
 
         File input = new File(outputNetwork);
 
@@ -64,7 +65,6 @@ public class TramRouteModifier {
         VehiclesFactory tvfactory = scenario.getTransitVehicles().getFactory();
 
         /** (1) Load predefined Nodes as List and as Map (Map with stop names) */
-        System.out.println("\tLoad given nodes (and create non-existing) and its (new) stop names...");
         LoadTramModifiyNodes loadNodesAnd = new LoadTramModifiyNodes(network,OPTION);
         List<Node> nodeList = loadNodesAnd.getList(OPTION);
         Map<Node, String> nodeMap = loadNodesAnd.getMap(OPTION,tschedule);
@@ -80,82 +80,108 @@ public class TramRouteModifier {
          * e.g. getinfo.get("WD");  //
          * */
         /** (2) Create new pt-links and get linkId-Map WD/DW */
-        System.out.println("\tCreate and add new pt-links for both directions...");
         Map<String, List<Id<Link>>> links = new TramNetworkBuilder().build(network,nodeList,outputNetwork);
         System.out.println("\t...Done!");
 
+        // TODO: Delete this part
         /** (3) Create and set new NetworkRoutes and get Networkroute-Map WD/DW */
-        System.out.println("\tCreate NetworkRoutes with linkLists for both directions...");
         //Map<String, NetworkRoute> nwroutes = new NetworkRouteBuilder().build(scenario,links);
         System.out.println("\t...Done!");
 
         /** (4) Get (and create non-existing) TransitRouteStops and get TransitRouteStop-Map WD/DW */
-        // TO DO: Create new TransitStops if their is no TransitStop with those Coord - name???
+        // TODO: Create new TransitStops if their is no TransitStop with those Coord - name???
         // Here done manually with one stop
-        System.out.println("\tCreate/Get all TransitStops and put them into the right order...");
         Map<String,List<TransitRouteStop>> trstops = new TransitRouteStopBuilder().build(nodeList, nodeMap, links, tschedule);
         System.out.println("\t...Done!");
 
         /** (5) Try to extend line with ROUTE to ROUTE_EXT */
         System.out.println("\tGet informations from existing Route and add new...");
 
-        /** (5).1 Get M10 line, route (19) and clone original networkroute */
-        TransitLine m10_ori = tschedule.getTransitLines().get(Id.create(ROUTE, TransitLine.class));
-        // TO DO: Maybe a starting point to iterate on all necessary routes! (Start while-loop here...)
-        TransitRoute m10_19_ori = m10_ori.getRoutes().get(Id.create(ROUTE+"_19", TransitRoute.class));
-        NetworkRoute m10_19_route_ext = m10_19_ori.getRoute().clone();
+        /** (5).1 Get M10 line, routes and clone original networkroute */
+        TransitLine m10 = tschedule.getTransitLines().get(Id.create(ROUTE, TransitLine.class));
 
-        /** (5).2 Get original links and new links together -> NAME+ROUTE_linkList_ext */
-        System.out.println("\t\t...links");
-        List<Id<Link>> m10_19_linkList_ext = new ArrayList<>();
-        m10_19_linkList_ext.addAll(m10_19_ori.getRoute().getLinkIds());
-        // FIX ERROR: last link is not in getLinkIds() ... why? (see printouts for info, ask Dominik)
-        //System.out.println(m10_19_linkList_ext);
-        m10_19_linkList_ext.add(Id.createLinkId("pt_38360"));
-        m10_19_linkList_ext.addAll(links.get("WD"));
-        //System.out.println(m10_19_linkList_ext);
-
-        /** (5).3 Set (5).2 into new NetworkRoute */
-        System.out.println("\t\t...NetworkRoute(s)");
-        int end = m10_19_linkList_ext.size();
-        m10_19_route_ext.setLinkIds(m10_19_linkList_ext.get(0),m10_19_linkList_ext.subList(1,end-1),m10_19_linkList_ext.get(end-1));
-
-        /** (5).4 Get original TarnsitRouteStops and extend by List from (4) */
-        // TO DO: Edit variables (number of extended stops, departure time, ...) to be flexible with other routes! (with Julia's help)
-        // TO DO: Better way to edit departures? Do inside new class maybe better?
-        System.out.println("\t\t...TransitRouteStops");
-        List<TransitRouteStop> m10_19_stoplist_ext = new ArrayList<>();
-        m10_19_stoplist_ext.addAll(m10_19_ori.getStops());
-
-        double starttime = m10_19_ori.getStops().get(m10_19_ori.getStops().size()-1).getDepartureOffset().seconds();
-
-        for(int i=0;i<4;i++) {
-            m10_19_stoplist_ext.add(tsfactory.createTransitRouteStop(trstops.get("WD").get(i + 1).getStopFacility(), (starttime + (i * 60.)), (starttime + (i * 60.) + 10.)));
+        List<TransitRoute> necessaryroutesWD = new ArrayList<>();
+        for(TransitRoute route:m10.getRoutes().values()){
+            if(route.getStops().get(route.getStops().size()-1).getStopFacility().getName().equals(nodeMap.get(nodeList.get(1)))){
+                necessaryroutesWD.add(route);
+            }
         }
 
-        /** (5).5 Get original Departures, Description -> delete original Route -> Set new extended Route with all infos */
-        // TO DO: Get new TransitVehicles if original number of vehicles not sufficient for new schedule (with Julia's help)
-        System.out.println("\t\t...Departures");
-        //System.out.println("\t\t...TransitVehicles");
-        System.out.println("\tRemove original TransitRoute and...");
-        Map<Id<Departure>, Departure> m10_19_oriDepartures = m10_19_ori.getDepartures();
-        String m10_19_oriDescription = m10_19_ori.getDescription();
-        //Attributes m10_19_oriAttributes = m10_19_ori.getAttributes();
-        m10_ori.removeRoute(m10_19_ori);
+        // Beginning for-loop for all necessary routes (Dep/Arr at Warschauer Str.)
+        for(TransitRoute m10index :necessaryroutesWD) {
+            String index = m10index.getId().toString() + "_EXT";
+            NetworkRoute m10route_ext = m10index.getRoute().clone();
+            System.out.println(m10index);
 
-        // TO DO: "19" should be replaced by all routes which have their terminus at Warschauer Str.
-        // TO DO: What happens with the routes that are currently starting at Warschauer Str. (with Julia's help?)
-        TransitRoute m10_19_ext = tsfactory.createTransitRoute(Id.create(ROUTE+"_19_EXT", TransitRoute.class),m10_19_route_ext,m10_19_stoplist_ext,"tram");
-        m10_19_ext.setDescription(m10_19_oriDescription);
-        for(Departure dep:m10_19_oriDepartures.values()){
-            m10_19_ext.addDeparture(dep);
+            /** (5).2 Get original links and new links together -> NAME+ROUTE_linkList_ext */
+            System.out.println("\t\t...links");
+            List<Id<Link>> m10_19_linkList_ext = new ArrayList<>();
+            m10_19_linkList_ext.add(m10route_ext.getStartLinkId());
+            m10_19_linkList_ext.addAll(m10index.getRoute().getLinkIds());
+            m10_19_linkList_ext.add(m10route_ext.getEndLinkId());
+            m10_19_linkList_ext.addAll(links.get("WD").subList(1, links.get("WD").size()));
+            //System.out.println(m10_19_linkList_ext);      // for troubleshooting: get new LinkList for new NetworkRoute
+
+            /** (5).3 Set (5).2 into new NetworkRoute */
+            System.out.println("\t\t...NetworkRoute(s)");
+            int end = m10_19_linkList_ext.size();
+            m10route_ext.setLinkIds(m10_19_linkList_ext.get(0), m10_19_linkList_ext.subList(1, end - 1), m10_19_linkList_ext.get(end - 1));
+            //System.out.println(m10route_ext);             // for troubleshooting: get new NetworkRoute WITHOUT startLinkId/endLinkId
+
+            /** (5).4 Get original TarnsitRouteStops and extend by List from (4) */
+            // TODO: Edit variables (number of extended stops, departure time, ...) to be flexible with other routes! (with Julia's help)
+            // TODO: Better way to edit departures? Do inside new class maybe better?
+            System.out.println("\t\t...TransitRouteStops");
+            List<TransitRouteStop> m10_19_stoplist_ext = new ArrayList<>();
+            m10_19_stoplist_ext.addAll(m10index.getStops());
+
+            double starttime = m10index.getStops().get(m10index.getStops().size() - 1).getDepartureOffset().seconds();
+
+            for (int i = 0; i < 4; i++) {
+                m10_19_stoplist_ext.add(tsfactory.createTransitRouteStop(trstops.get("WD").get(i).getStopFacility(), (starttime + ((i + 1) * 60.)), (starttime + ((i + 1) * 60.))));
+            }
+            //System.out.println(m10_19_stoplist_ext);          // for troubleshooting: get new TransitRouteStopLists
+
+            /** (5).5 Get original Departures, Description -> delete original Route -> Set new extended Route with all infos */
+            // TODO: Get new TransitVehicles if original number of vehicles not sufficient for new schedule (with Julia's help)
+            System.out.println("\t\t...Departures");
+            //System.out.println("\t\t...TransitVehicles");     //???
+            Map<Id<Departure>, Departure> m10indexDepartures = m10index.getDepartures();
+            //String m10indexDescription = m10index.getDescription();         //???
+            //Attributes m10indexAttributes = m10index.getAttributes();      //???
+
+            System.out.println("\tRemove original TransitRoute and...");
+            m10.removeRoute(m10index);
+
+            // TODO: "19" should be replaced by all routes which have their terminus at Warschauer Str.
+            // TODO: What happens with the routes that are currently starting at Warschauer Str. (with Julia's help?)
+            TransitRoute m10_19_ext = tsfactory.createTransitRoute(Id.create(index, TransitRoute.class), m10route_ext, m10_19_stoplist_ext, "tram");
+            for (Departure dep : m10indexDepartures.values()) {
+                m10_19_ext.addDeparture(dep);
+            }
+
+            /** (5).6 Add new extended Route to existing TransitLine and write new TransitSchedule */
+            System.out.println("\t...add new route with ALL informations into existing TransitLine");
+            m10.addRoute(m10_19_ext);
         }
-
-        /** (5).6 Add new extended Route to existing TransitLine and write new TransitSchedule */
-        System.out.println("\t...add new route with ALL informations into existing TransitLine");
-        m10_ori.addRoute(m10_19_ext);
         new TransitScheduleWriter(scenario.getTransitSchedule()).writeFile(outputSchedule);
+
+        System.out.println("\tRunning Validator...");
+        TransitScheduleValidator.ValidationResult validationResult = new TransitScheduleValidator.ValidationResult();
+        TransitScheduleValidator.validateAll(tschedule, network);
+        System.out.print("\t\t"); TransitScheduleValidator.printResult(validationResult);
+        System.out.println("\t...Done!");
+
         System.out.println("\t...Done!");
         System.out.println("### DONE! ###");
+
+//        ## Maybe interesting outputs to look at for troubleshooting ##
+//        System.out.println(m10);
+//        System.out.println(m10_19_ext);
+//        System.out.println(m10indexDepartures);
+//        System.out.println(m10_19_stoplist_ext);
+//        System.out.println(m10_19_route_ext);
+//        System.out.println(m10_19_linkList_ext);
+
     }
 }

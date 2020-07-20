@@ -48,6 +48,7 @@ import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.geometry.transformations.TransformationFactory;
 import org.matsim.prepare.gruppeB.RunTramModifier;
 import org.matsim.pt.transitSchedule.api.TransitSchedule;
+import org.matsim.pt.utils.TransitScheduleValidator;
 import org.matsim.run.drt.OpenBerlinIntermodalPtDrtRouterModeIdentifier;
 import org.matsim.run.drt.RunDrtOpenBerlinScenario;
 import org.matsim.run.singleTripStrategies.ChangeSingleTripModeAndRoute;
@@ -72,11 +73,13 @@ public final class RunBerlinTramScenario {
 
     public static void main(String[] args) {
 
+        // Input files
         String configFile = "scenarios/berlin-v5.5-1pct/input/berlin-v5.5-1pct.config.xml";
         String inputNetwork = "scenarios/berlin-v5.5-1pct/input/berlin-matsim-v5.5-network.xml.gz";
 
-        String outputNetwork = "scenarios/berlin-v5.5-1pct/input/berlin-tram-network.xml.gz";
-        String outputSchedule = "scenarios/berlin-v5.5-1pct/input/M10new-transitSchedule.xml.gz";
+        // Output files
+        String outputNetwork = "scenarios/berlin-v5.5-1pct/input/berlin-tram_v4-network.xml.gz";
+        String outputSchedule = "scenarios/berlin-v5.5-1pct/input/M10_WD-transitSchedule.xml.gz";
 
         for (String arg : args) {
             log.info( arg );
@@ -88,9 +91,9 @@ public final class RunBerlinTramScenario {
 
 
         /** Name of Tram Line */
-        final String NAME = "M10";  // TO DO: Get this as parameter from RunTramModifier, but does not exist yet...
+        final String NAME = "M10";
         /** Choose Route option */
-        final int OPTION = 4;       // TO DO: Get this as parameter from RunTramModifier, but does not exist yet...
+        final int OPTION = 4;
         final String OPT = String.valueOf(OPTION);
 
         /** Set input files */
@@ -108,36 +111,33 @@ public final class RunBerlinTramScenario {
         }*/
 
         /** Load necessary files */
-        // Get at least config and scenario from RunTramModifier (when existing)
-        // Config config = ConfigUtils.loadConfig(configFile);
-        //Scenario scenario = ScenarioUtils.loadScenario(config);
-
         Config config = prepareConfig( args ) ;
         config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
         // Last iteration to xy
-        config.controler().setLastIteration(10);
+        config.controler().setLastIteration(3);
         // Set output folder
-        config.controler().setOutputDirectory("./outputs/output_tram010");
+        config.controler().setOutputDirectory("./outputs/output_tram003ext");
 
-        // Set readable Path and change input network in config
-        String newnetwork = "./berlin-tram-network.xml.gz";
-        String newSchedule = "./M10new-transitSchedule.xml.gz";
+        // Set readable Path for config (see "Set new inputs")
+        String newnetwork = "./berlin-tram_v4-network.xml.gz";
+        String newSchedule = "./M10_WD-transitSchedule.xml.gz";
 
         Scenario scenario = prepareScenario( config ) ;
         TransitSchedule tschedule = scenario.getTransitSchedule();
 
-        // Run own TramModify
-        new RunTramModifier().buildnew(scenario, inputNetwork, outputNetwork, tschedule, newSchedule, NAME, OPTION);
-        //new RunTramModifier().extend(scenario,modified_network,outputSchedule,tschedule,NAME,OPTION);
+        // Run own TramModify (buildnew for new Line (actually unused and not working) | extend to extend existing lines)
+        // new RunTramModifier().buildnew(scenario, inputNetwork, outputNetwork, tschedule, outputSchedule, NAME, OPTION);
+        new RunTramModifier().extend(scenario, inputNetwork, outputNetwork, tschedule, outputSchedule, NAME, OPTION);
 
         // Set new inputs
-        //config.network().setInputFile(newnetwork);
-        //config.transit().setTransitScheduleFile(newSchedule);
+        config.network().setInputFile(newnetwork);
+        config.transit().setTransitScheduleFile(newSchedule);
 
+        // Prepare scenario again and prepare Controler
+        scenario = prepareScenario(config);
         Controler controler = prepareControler( scenario ) ;
 
         controler.run() ;
-
     }
 
 
