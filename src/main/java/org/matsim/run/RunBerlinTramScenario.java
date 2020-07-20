@@ -73,9 +73,11 @@ public final class RunBerlinTramScenario {
 
     public static void main(String[] args) {
 
+        // Input files
         String configFile = "scenarios/berlin-v5.5-1pct/input/berlin-v5.5-1pct.config.xml";
         String inputNetwork = "scenarios/berlin-v5.5-1pct/input/berlin-matsim-v5.5-network.xml.gz";
 
+        // Output files
         String outputNetwork = "scenarios/berlin-v5.5-1pct/input/berlin-tram_v3-network.xml.gz";
         String outputSchedule = "scenarios/berlin-v5.5-1pct/input/M10_WD-transitSchedule.xml.gz";
 
@@ -112,34 +114,30 @@ public final class RunBerlinTramScenario {
         Config config = prepareConfig( args ) ;
         config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
         // Last iteration to xy
-        config.controler().setLastIteration(10);
+        config.controler().setLastIteration(2);
         // Set output folder
-        config.controler().setOutputDirectory("./outputs/output_tram010ext");
+        config.controler().setOutputDirectory("./outputs/output_tram002ext");
 
-        // Set readable Path and change input network in config
+        // Set readable Path for config (see "Set new inputs")
         String newnetwork = "./berlin-tram_v3-network.xml.gz";
         String newSchedule = "./M10_WD-transitSchedule.xml.gz";
 
         Scenario scenario = prepareScenario( config ) ;
         TransitSchedule tschedule = scenario.getTransitSchedule();
 
-        //TransitScheduleValidator.validateAll(scenario.getTransitSchedule(),scenario.getNetwork());
-
-        //TODO: This part  (Run own TramModify and Set new inputs) is still not working!
-        //Uncomment these and change configfile path to ... config_mod to try by yourself
-
-        // Run own TramModify
+        // Run own TramModify (buildnew for new Line (actually unused and not working) | extend to extend existing lines)
         // new RunTramModifier().buildnew(scenario, inputNetwork, outputNetwork, tschedule, outputSchedule, NAME, OPTION);
-        //new RunTramModifier().extend(scenario, inputNetwork, outputNetwork, tschedule, outputSchedule, NAME, OPTION);
+        new RunTramModifier().extend(scenario, inputNetwork, outputNetwork, tschedule, outputSchedule, NAME, OPTION);
 
         // Set new inputs
-        //config.network().setInputFile(newnetwork);
-        //config.transit().setTransitScheduleFile(newSchedule);
+        config.network().setInputFile(newnetwork);
+        config.transit().setTransitScheduleFile(newSchedule);
 
+        // Prepare scenario again and prepare Controler
+        scenario = prepareScenario(config);
         Controler controler = prepareControler( scenario ) ;
 
         controler.run() ;
-
     }
 
 
