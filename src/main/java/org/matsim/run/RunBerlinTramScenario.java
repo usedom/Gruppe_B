@@ -78,7 +78,7 @@ public final class RunBerlinTramScenario {
         String inputNetwork = "scenarios/berlin-v5.5-1pct/input/berlin-matsim-v5.5-network.xml.gz";
 
         // Output files
-        String outputNetwork = "scenarios/berlin-v5.5-1pct/input/berlin-tram_v3-network.xml.gz";
+        String outputNetwork = "scenarios/berlin-v5.5-1pct/input/berlin-tram_v4-network.xml.gz";
         String outputSchedule = "scenarios/berlin-v5.5-1pct/input/M10_WD-transitSchedule.xml.gz";
 
         for (String arg : args) {
@@ -114,12 +114,12 @@ public final class RunBerlinTramScenario {
         Config config = prepareConfig( args ) ;
         config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
         // Last iteration to xy
-        config.controler().setLastIteration(2);
+        config.controler().setLastIteration(3);
         // Set output folder
-        config.controler().setOutputDirectory("./outputs/output_tram002ext");
+        config.controler().setOutputDirectory("./outputs/output_tram003ext");
 
         // Set readable Path for config (see "Set new inputs")
-        String newnetwork = "./berlin-tram_v3-network.xml.gz";
+        String newnetwork = "./berlin-tram_v4-network.xml.gz";
         String newSchedule = "./M10_WD-transitSchedule.xml.gz";
 
         Scenario scenario = prepareScenario( config ) ;

@@ -65,7 +65,6 @@ public class TramRouteModifier {
         VehiclesFactory tvfactory = scenario.getTransitVehicles().getFactory();
 
         /** (1) Load predefined Nodes as List and as Map (Map with stop names) */
-        System.out.println("\tLoad given nodes (and create non-existing) and its (new) stop names...");
         LoadTramModifiyNodes loadNodesAnd = new LoadTramModifiyNodes(network,OPTION);
         List<Node> nodeList = loadNodesAnd.getList(OPTION);
         Map<Node, String> nodeMap = loadNodesAnd.getMap(OPTION,tschedule);
@@ -81,13 +80,11 @@ public class TramRouteModifier {
          * e.g. getinfo.get("WD");  //
          * */
         /** (2) Create new pt-links and get linkId-Map WD/DW */
-        System.out.println("\tCreate and add new pt-links for both directions...");
         Map<String, List<Id<Link>>> links = new TramNetworkBuilder().build(network,nodeList,outputNetwork);
         System.out.println("\t...Done!");
 
         // TODO: Delete this part
         /** (3) Create and set new NetworkRoutes and get Networkroute-Map WD/DW */
-        System.out.println("\tCreate NetworkRoutes with linkLists for both directions...");
         //Map<String, NetworkRoute> nwroutes = new NetworkRouteBuilder().build(scenario,links);
         System.out.println("\t...Done!");
 
