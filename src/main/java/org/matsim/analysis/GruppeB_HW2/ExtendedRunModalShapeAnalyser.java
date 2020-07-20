@@ -1,6 +1,5 @@
-package org.matsim.analysis.gruppeB;
+package org.matsim.analysis.GruppeB_HW2;
 
-import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.population.Activity;
@@ -9,11 +8,9 @@ import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.scenario.ScenarioUtils;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +29,6 @@ public class ExtendedRunModalShapeAnalyser {
 
 
         Config config = ConfigUtils.loadConfig(configFile);
-
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
 

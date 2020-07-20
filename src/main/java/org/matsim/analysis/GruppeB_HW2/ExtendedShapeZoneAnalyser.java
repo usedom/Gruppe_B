@@ -1,4 +1,4 @@
-package org.matsim.analysis.gruppeB;
+package org.matsim.analysis.GruppeB_HW2;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;

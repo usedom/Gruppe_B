@@ -7,7 +7,7 @@ import org.matsim.core.events.MatsimEventsReader;
 public class RunEventsHandlerJulia {
 
     public static void main(String[] args) {
-        String inputFile = "output_exp001/berlin-v5.5-1pct.output_events.xml";
+        String inputFile = "outputs/ output_exp001/berlin-v5.5-1pct.output_events.xml";
         //String outputFile = "output_exp001/ITERS/testHandledEvents.txt";
 
         EventsManager eventsManager = EventsUtils.createEventsManager();

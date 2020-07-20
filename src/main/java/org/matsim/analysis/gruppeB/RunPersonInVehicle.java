@@ -24,7 +24,6 @@ public class RunPersonInVehicle {
         MatsimEventsReader eventsReader = new MatsimEventsReader(eventsManager);
         eventsReader.readFile(inputFile);
 
-       // linkEventHandler.print();
-        personEntersVehicleHandler.print();
+        linkEventHandler.print();
     }
 }

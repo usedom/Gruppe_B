@@ -1,17 +1,11 @@
 package org.matsim.analysis.GruppeB_HW2;
 
-import org.matsim.api.core.v01.Coord;
-import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
-import org.matsim.api.core.v01.population.Person;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.scenario.ScenarioUtils;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Map;
 
 public class RunModalShapeAnalyser_backup {
     private static BufferedWriter writer;
@@ -32,10 +26,10 @@ public class RunModalShapeAnalyser_backup {
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
 
-        ShapesZoneAnalyzer_djp shapesZoneAnalyzerDjp = new ShapesZoneAnalyzer_djp(config, scenario, shapeFile);
+        //ShapesZoneAnalyzer_djp shapesZoneAnalyzerDjp = new ShapesZoneAnalyzer_djp(config, scenario, shapeFile);
 
 
-      //  [int] intrstingShaps = []
+      /*//  [int] intrstingShaps = []
         String output = "";
         for (int i = 1; i < 448; i++){
             Map<Id<Person>, Coord> persons5050 = shapesZoneAnalyzerDjp.getPersonsHomeInShape(i);
@@ -54,6 +48,6 @@ public class RunModalShapeAnalyser_backup {
         } catch(IOException ee){
             throw new RuntimeException(ee);
         }
-        System.out.println("\nDONE!\n###\n");
+        System.out.println("\nDONE!\n###\n"); */
     }
 }
