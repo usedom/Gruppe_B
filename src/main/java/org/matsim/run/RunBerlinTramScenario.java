@@ -114,20 +114,20 @@ public final class RunBerlinTramScenario {
         Config config = prepareConfig( args ) ;
         config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
         // Last iteration to xy
-        config.controler().setLastIteration(3);
+        config.controler().setLastIteration(1);
         // Set output folder
-        config.controler().setOutputDirectory("./outputs/output_tram003ext");
+        config.controler().setOutputDirectory("./outputs/output_tram001ext_mod");
 
         // Set readable Path for config (see "Set new inputs")
-        String newnetwork = "./berlin-tram_v4-network.xml.gz";
-        String newSchedule = "./M10_WD-transitSchedule.xml.gz";
+        String newnetwork = "./tram_v4_mod-berlin-matsim.xml.gz";
+        String newSchedule = "./M10_WD_mod-transitSchedule.xml.gz";
 
         Scenario scenario = prepareScenario( config ) ;
         TransitSchedule tschedule = scenario.getTransitSchedule();
 
         // Run own TramModify (buildnew for new Line (actually unused and not working) | extend to extend existing lines)
         // new RunTramModifier().buildnew(scenario, inputNetwork, outputNetwork, tschedule, outputSchedule, NAME, OPTION);
-        new RunTramModifier().extend(scenario, inputNetwork, outputNetwork, tschedule, outputSchedule, NAME, OPTION);
+        //new RunTramModifier().extend(scenario, inputNetwork, outputNetwork, tschedule, outputSchedule, NAME, OPTION);
 
         // Set new inputs
         config.network().setInputFile(newnetwork);
