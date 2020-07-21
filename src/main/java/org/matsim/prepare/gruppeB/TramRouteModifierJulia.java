@@ -132,7 +132,7 @@ public class TramRouteModifierJulia {
         double starttime = m10_19_ori.getStops().get(m10_19_ori.getStops().size()-1).getDepartureOffset().seconds();
 
         for(int i=0;i<4;i++) {
-            m10_19_stoplist_ext.add(tsfactory.createTransitRouteStop(trstops.get("WD").get(i + 1).getStopFacility(), (starttime + (i * 60.)), (starttime + (i * 60.) + 10.)));
+            m10_19_stoplist_ext.add(tsfactory.createTransitRouteStop(trstops.get("WD").get(i).getStopFacility(), (starttime + (i * 60.)), (starttime + (i * 60.) + 10.)));
         }
 
         /** (5).5 Get original Departures, Description -> delete original Route -> Set new extended Route with all infos */
@@ -184,25 +184,25 @@ public class TramRouteModifierJulia {
             NetworkRoute oldroute = scenario.getTransitSchedule().getTransitLines().get(transitLineM10).getRoutes().get(id).getRoute();
 
             //neue Variablen deklarieren
+            List<Id<Link>> newlinkIds = new ArrayList<>();
             NetworkRoute newroute = oldroute.clone();
             List<TransitRouteStop> newstoplist = new ArrayList<>();
 
             //Route aus der TransitSchedule löschen
-            scenario.getTransitSchedule().getTransitLines().get(transitLineM10).removeRoute(oldRoute);
+                scenario.getTransitSchedule().getTransitLines().get(transitLineM10).removeRoute(oldRoute);
 
             //neue Infos erstellen
             /**(1) routes: Start link, Strecke, End Link**/
             //Das wäre die Richtung von Hermannplatz über Warschauer nach Lüneburger
             if (oldstartlinkid.equals(Id.createLinkId("pt_38323"))) {
                 newroute.setStartLinkId(Id.createLinkId("pt_M10_4DW-0"));
-                newlinkidsDW.addAll(oldlinkids);
-                newroute.setLinkIds(Id.createLinkId("pt_M10_4DW-0"), newlinkidsDW, oldendlinkid);
+                newlinkIds.addAll(newlinkidsDW);
+                newlinkIds.addAll(oldlinkids);
+                newroute.setLinkIds(Id.createLinkId("pt_M10_4DW-0"), newlinkIds, oldendlinkid);
             }
             //Das wäre die Richtung von Lüneburger über Warschauer nach Hermannplatz
             if (oldendlinkid.equals(Id.createLinkId("pt_38360"))) {
                 newroute.setEndLinkId(Id.createLinkId("pt_M10_4WD-4"));
-                //List<Id<Link>> oldlinkIds = scenario.getTransitSchedule().getTransitLines().get(transitLineM10).getRoutes().get(id).getRoute().getLinkIds();
-                List<Id<Link>> newlinkIds = new ArrayList<>();
                 newlinkIds.addAll(oldlinkids);
                 newlinkIds.add(Id.createLinkId("pt_38360"));
                 newlinkIds.addAll(newlinkidsWD);
@@ -228,9 +228,14 @@ public class TramRouteModifierJulia {
                 double aoffset = oldstoplist.get(nofstops - 1).getArrivalOffset().seconds();
                 newstoplist.addAll(oldstoplist);
                 for(int i=0;i<4;i++) {
-                    newstoplist.add(tsfactory.createTransitRouteStop(trstops.get("WD").get(i + 1).getStopFacility(), doffset+(60*(i+1)), aoffset+(60*(i+1))));
+                    newstoplist.add(tsfactory.createTransitRouteStop(trstops.get("WD").get(i).getStopFacility(), doffset+(60*(i+1)), aoffset+(60*(i+1))));
                     newstoplist.get(i).setAwaitDepartureTime(true);
                 }
+            }
+            if (!oldstoplist.get(0).getStopFacility().getId().equals(Id.create("070301008821", TransitStopFacility.class)) && !oldstoplist.get(nofstops-1).getStopFacility().getId().equals(Id.create("070301008819", TransitStopFacility.class))){
+             //  for (int i=0;i<4;i++)
+                newstoplist.addAll(oldstoplist);
+                //newstoplist.get().setAwaitDepartureTime(true);
             }
 
             TransitRoute newtransitroute = tsfactory.createTransitRoute(id,newroute,newstoplist,oldtransportMode);
@@ -250,6 +255,7 @@ public class TramRouteModifierJulia {
             //erstelle eine neue transitroute und schreib sie in TransitSchedule
             scenario.getTransitSchedule().getTransitLines().get(transitLineM10).addRoute(newtransitroute);
             new TransitScheduleWriter(scenario.getTransitSchedule()).writeFile(outputSchedule);
+
         }
 
         System.out.println("Hier Ende -------------------------");
