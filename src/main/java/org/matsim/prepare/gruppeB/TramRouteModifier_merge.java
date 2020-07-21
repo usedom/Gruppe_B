@@ -92,7 +92,6 @@ public class TramRouteModifier_merge {
         // Here done manually with one stop
         Map<String,List<TransitRouteStop>> trstops = new TransitRouteStopBuilder().build(nodeList, nodeMap, links, tschedule);
         System.out.println("\t...Done!");
-
 //        /** (5) Try to extend line with ROUTE to ROUTE_EXT */
 //        System.out.println("\tGet informations from existing Route and add new...");
 //
@@ -206,12 +205,14 @@ public class TramRouteModifier_merge {
             //Das wäre die Richtung von Hermannplatz über Warschauer nach Lüneburger
             if (oldstartlinkid.equals(Id.createLinkId("pt_38323"))) {
                 newroute.setStartLinkId(Id.createLinkId("pt_M10_4DW-0"));
+                newroute.setEndLinkId(oldendlinkid);
                 newlinkIds.addAll(newlinkidsDW);
                 newlinkIds.addAll(oldlinkids);
                 newroute.setLinkIds(Id.createLinkId("pt_M10_4DW-0"), newlinkIds, oldendlinkid);
             }
             //Das wäre die Richtung von Lüneburger über Warschauer nach Hermannplatz
             if (oldendlinkid.equals(Id.createLinkId("pt_38360"))) {
+                newroute.setStartLinkId(oldstartlinkid);
                 newroute.setEndLinkId(Id.createLinkId("pt_M10_4WD-4"));
                 newlinkIds.addAll(oldlinkids);
                 newlinkIds.add(Id.createLinkId("pt_38360"));
@@ -227,8 +228,14 @@ public class TramRouteModifier_merge {
                     newstoplist.get(i).setAwaitDepartureTime(true);
                 }
                 for (int n=0; n<oldstoplist.size(); n++){
-                    newstoplist.add(tsfactory.createTransitRouteStop(oldstoplist.get(n).getStopFacility(),oldstoplist.get(n).getDepartureOffset().seconds()+240, oldstoplist.get(n).getArrivalOffset().seconds()+240));
-                    newstoplist.get(n+4).setAwaitDepartureTime(true);
+                    if (n==0){
+                        newstoplist.add(tsfactory.createTransitRouteStop(trstops.get("DW").get(4).getStopFacility(), oldstoplist.get(n).getDepartureOffset().seconds() + 240, oldstoplist.get(n).getArrivalOffset().seconds() + 240));
+                        newstoplist.get(n + 4).setAwaitDepartureTime(true);
+                    }
+                    if (n>0) {
+                        newstoplist.add(tsfactory.createTransitRouteStop(oldstoplist.get(n).getStopFacility(), oldstoplist.get(n).getDepartureOffset().seconds() + 240, oldstoplist.get(n).getArrivalOffset().seconds() + 240));
+                        newstoplist.get(n + 4).setAwaitDepartureTime(true);
+                    }
                 }
             }
             int nofstops = oldstoplist.size();
