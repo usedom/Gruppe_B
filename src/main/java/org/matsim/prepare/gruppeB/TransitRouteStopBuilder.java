@@ -50,7 +50,7 @@ public class TransitRouteStopBuilder {
             TransitStopFacility stopFacilityWD;
             TransitStopFacility stopFacilityDW;
             String stopFacilityKeyWD = nodeList.get(i).getId().toString().substring(3);
-            String stopFacilityKeyDW = stopFacilityKeyWD.substring(0,stopFacilityKeyWD.length()-2) + ".9";
+            String stopFacilityKeyDW = stopFacilityKeyWD + ".9";
             String stopname = nodeMap.get(nodeList.get(i));
             Coord tscoord = nodeList.get(i).getCoord();
 

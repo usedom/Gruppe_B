@@ -264,9 +264,11 @@ public class TramRouteModifier_merge {
 
             //erstelle eine neue transitroute und schreib sie in TransitSchedule
             scenario.getTransitSchedule().getTransitLines().get(transitLineM10).addRoute(newtransitroute);
-            new TransitScheduleWriter(scenario.getTransitSchedule()).writeFile(outputSchedule);
+
 
         }
+
+        new TransitScheduleWriter(scenario.getTransitSchedule()).writeFile(outputSchedule);
 
         System.out.println("Hier Ende -------------------------");
 
