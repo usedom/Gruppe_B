@@ -13,7 +13,6 @@ import org.matsim.core.network.io.MatsimNetworkReader;
 import org.matsim.core.population.routes.NetworkRoute;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.pt.transitSchedule.api.*;
-import org.matsim.pt.utils.TransitScheduleValidator;
 import org.matsim.vehicles.VehiclesFactory;
 
 import java.io.File;
@@ -154,7 +153,7 @@ public class TramRouteModifier_merge {
 //            m10.removeRoute(m10index);
 //        }
 
-        //coding part Julia
+//coding part Julia
 
         Id<TransitLine> transitLineM10 = Id.create("M10---17440_900", TransitLine.class);
         List<Id<TransitRoute>> trlineM10 = new ArrayList<>(scenario.getTransitSchedule().getTransitLines().get(transitLineM10).getRoutes().keySet());
@@ -195,6 +194,7 @@ public class TramRouteModifier_merge {
             NetworkRoute oldroute = scenario.getTransitSchedule().getTransitLines().get(transitLineM10).getRoutes().get(id).getRoute();
 
             //neue Variablen deklarieren
+            List<Id<Link>> newlinkIds = new ArrayList<>();
             NetworkRoute newroute = oldroute.clone();
             List<TransitRouteStop> newstoplist = new ArrayList<>();
 
@@ -206,14 +206,13 @@ public class TramRouteModifier_merge {
             //Das wäre die Richtung von Hermannplatz über Warschauer nach Lüneburger
             if (oldstartlinkid.equals(Id.createLinkId("pt_38323"))) {
                 newroute.setStartLinkId(Id.createLinkId("pt_M10_4DW-0"));
-                newlinkidsDW.addAll(oldlinkids);
-                newroute.setLinkIds(Id.createLinkId("pt_M10_4DW-0"), newlinkidsDW, oldendlinkid);
+                newlinkIds.addAll(newlinkidsDW);
+                newlinkIds.addAll(oldlinkids);
+                newroute.setLinkIds(Id.createLinkId("pt_M10_4DW-0"), newlinkIds, oldendlinkid);
             }
             //Das wäre die Richtung von Lüneburger über Warschauer nach Hermannplatz
             if (oldendlinkid.equals(Id.createLinkId("pt_38360"))) {
                 newroute.setEndLinkId(Id.createLinkId("pt_M10_4WD-4"));
-                //List<Id<Link>> oldlinkIds = scenario.getTransitSchedule().getTransitLines().get(transitLineM10).getRoutes().get(id).getRoute().getLinkIds();
-                List<Id<Link>> newlinkIds = new ArrayList<>();
                 newlinkIds.addAll(oldlinkids);
                 newlinkIds.add(Id.createLinkId("pt_38360"));
                 newlinkIds.addAll(newlinkidsWD);
@@ -243,6 +242,11 @@ public class TramRouteModifier_merge {
                     newstoplist.get(i).setAwaitDepartureTime(true);
                 }
             }
+            if (!oldstoplist.get(0).getStopFacility().getId().equals(Id.create("070301008821", TransitStopFacility.class)) && !oldstoplist.get(nofstops-1).getStopFacility().getId().equals(Id.create("070301008819", TransitStopFacility.class))){
+                //  for (int i=0;i<4;i++)
+                newstoplist.addAll(oldstoplist);
+                //newstoplist.get().setAwaitDepartureTime(true);
+            }
 
             TransitRoute newtransitroute = tsfactory.createTransitRoute(id,newroute,newstoplist,oldtransportMode);
 
@@ -260,10 +264,9 @@ public class TramRouteModifier_merge {
 
             //erstelle eine neue transitroute und schreib sie in TransitSchedule
             scenario.getTransitSchedule().getTransitLines().get(transitLineM10).addRoute(newtransitroute);
+            new TransitScheduleWriter(scenario.getTransitSchedule()).writeFile(outputSchedule);
 
         }
-
-        new TransitScheduleWriter(scenario.getTransitSchedule()).writeFile(outputSchedule);
 
         System.out.println("Hier Ende -------------------------");
 
