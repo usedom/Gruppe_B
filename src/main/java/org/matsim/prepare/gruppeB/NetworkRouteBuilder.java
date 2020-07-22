@@ -26,6 +26,7 @@ public class NetworkRouteBuilder {
     }
 
     Map<String, NetworkRoute> build(Scenario scenario, Map<String, List<Id<Link>>> links){
+        System.out.println("\tCreate NetworkRoutes with linkLists for both directions...");
 
         PopulationFactory pfactory = scenario.getPopulation().getFactory();
         Map<String, NetworkRoute> nwroutes = new HashMap<>(2);

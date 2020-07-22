@@ -18,9 +18,10 @@ public class LoadTramModifiyNodes {
     Network network;
 
     public LoadTramModifiyNodes(Network network, int choice){
+        System.out.println("\tLoad given nodes (and create non-existing) and its (new) stop names...");
         this.network = network;
         switch(choice){
-            case 4: System.out.println("\t\tLoad Nodes for Option 4!"); option4(); break;
+            case 4: System.out.println("\t\t... for Option 4!"); option4(); break;
             default: System.out.println("\t\tERROR! No valid route option!\nNo changes are made!"); optionDefault(); break;
         }
     }

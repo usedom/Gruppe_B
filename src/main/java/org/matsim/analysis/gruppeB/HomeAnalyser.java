@@ -8,9 +8,9 @@ import org.matsim.api.core.v01.events.PersonLeavesVehicleEvent;
 import org.matsim.api.core.v01.events.handler.PersonLeavesVehicleEventHandler;
 import org.matsim.api.core.v01.population.*;
 import org.matsim.core.population.PopulationUtils;
-import org.matsim.core.population.io.PopulationReader;
 import org.matsim.core.router.TripStructureUtils;
 import org.matsim.vehicles.Vehicle;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,6 +34,10 @@ public class HomeAnalyser implements PersonLeavesVehicleEventHandler {
     Map<Double, Id<Person>> personmap = new HashMap<>();
     List<Double> x_homes = new ArrayList<>();
     List<Double> y_homes = new ArrayList<>();
+    /*List<Double> WalkingTime = new ArrayList<>();
+    List<Double> CarTime = new ArrayList<>();
+    List<Double> ptTime= new ArrayList<>();
+    List<Double> BicycleTime = new ArrayList<>();*/
 
     List<PlanElement> planElements = new ArrayList<>();
     List<TripStructureUtils.Trip> tripList = new ArrayList<>();
@@ -56,19 +60,16 @@ public class HomeAnalyser implements PersonLeavesVehicleEventHandler {
         }
     }
 
-
-//handleEvents checks if the personLeaveVehicleEvents is the same Vehcile ID as in the kmaEvent list (linkEnterEvents)
-    //and if the linkEnter event happens before the person leaves their vehicle
     @Override
     public void handleEvent(PersonLeavesVehicleEvent personLeavesVehicleEvent) {
         for (LinkEnterEvent kmaEvent: kmaEvents) {
            if(kmaEvent.getVehicleId().compareTo(personLeavesVehicleEvent.getVehicleId()) == 0 && kmaEvent.getTime() < personLeavesVehicleEvent.getTime()){
               personLeavesVehicleEventsWhichUsedKMA.add(personLeavesVehicleEvent);
+
            }
         }
     }
 
-    //
     public void analyseHome(Scenario scenario){
         int person_it = 0;
         for (PersonLeavesVehicleEvent leaveEvent: personLeavesVehicleEventsWhichUsedKMA) {
@@ -82,10 +83,13 @@ public class HomeAnalyser implements PersonLeavesVehicleEventHandler {
                     Person p = PopulationUtils.findPerson(personLeftVehicle, scenario);
                     Plan plan = p.getSelectedPlan();
 
+                    //Get home coordinates
                     tripList = TripStructureUtils.getTrips(plan);
                     System.out.println("Person: " + person_it++);
                     //planElements = plan.getPlanElements();
                     for(int i=0; i<tripList.size(); i++){
+                        //List<Leg> FirstLeg = tripList.get(i).getLegsOnly();
+                        //System.out.println("Legs" + FirstLeg);
                         Activity startactivity = tripList.get(i).getOriginActivity();
                         System.out.println("Start-Plan: " + tripList.get(i) + "\t" + "Coord: " + startactivity.getCoord());
                         Activity endactivity = tripList.get(i).getDestinationActivity();
