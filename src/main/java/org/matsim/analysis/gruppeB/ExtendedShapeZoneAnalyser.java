@@ -283,9 +283,9 @@ public class ExtendedShapeZoneAnalyser {
                         }
 
                     }
-                    System.out.println("Legs counted: " + legsAlreadyAnalysed.size());
-                    System.out.println(legsAlreadyAnalysed);
                 }
+                System.out.println("Legs counted: " + legsAlreadyAnalysed.size());
+                System.out.println(legsAlreadyAnalysed);
             }
 
         }
