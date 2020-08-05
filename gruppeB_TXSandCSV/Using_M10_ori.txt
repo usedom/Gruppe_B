@@ -1,0 +1,6 @@
+Anzahl an Fahrgästen M10 299 Anzahl an Fahrten410
+neue Haltestellen Auslastung
+Einstieg Hermannplatz 0
+Einstieg Pflügerstr. 0
+Einstieg Görtlitzer Park 0
+Einstieg Falckensteinstr. 0
