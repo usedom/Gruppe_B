@@ -16,7 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class ExtendedShapeZoneAnalyser {
+public class ModalShareInShapeAnalyser {
 
     Config config;
     Scenario scenario;
@@ -24,7 +24,7 @@ public class ExtendedShapeZoneAnalyser {
 
     private static BufferedWriter writer;
 
-    public ExtendedShapeZoneAnalyser(Config config, Scenario scenario, String shapeFile) {
+    public ModalShareInShapeAnalyser(Config config, Scenario scenario, String shapeFile) {
         this.config = config;
         this.scenario = scenario;
         this.shapeFile = shapeFile;

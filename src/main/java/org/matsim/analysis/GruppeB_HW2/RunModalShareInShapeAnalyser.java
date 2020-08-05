@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExtendedRunModalShapeAnalyser {
+public class RunModalShareInShapeAnalyser {
     private static BufferedWriter writer;
 
     public static void main(String[] args) {
@@ -33,7 +33,7 @@ public class ExtendedRunModalShapeAnalyser {
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
 
-        ExtendedShapeZoneAnalyser shapesZoneAnalyzer = new ExtendedShapeZoneAnalyser(config, scenario, shapeFile);
+        ModalShareInShapeAnalyser shapesZoneAnalyzer = new ModalShareInShapeAnalyser(config, scenario, shapeFile);
 
         //Array of ShapeIds that are analysed
         int[] extendedArea = {60, 65, 61, 66, 53, 55, 54, 287, 289, 283, 280, 51};
