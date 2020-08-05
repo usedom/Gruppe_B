@@ -47,7 +47,7 @@ public static void main(String[] args) {
     // TO DO: Get these ALL as parameters from RunTramModifier, but does not exist yet...
     // TO DO: Maybe also get networkFile locally and give as input from RunTramModifier...
     String configFile = "scenarios/berlin-v5.5-1pct/input/berlin-v5.5-1pct.config_mod.xml";
-    String outputNetwork = "scenarios/berlin-v5.5-1pct/input/tram_v2-berlin-matsim.xml.gz";
+    String outputNetwork = "scenarios/berlin-v5.5-1pct/input/tramnew_v2-berlin-matsim.xml.gz";
     String outputSchedule = "scenarios/berlin-v5.5-1pct/input/M10new_v2-transitSchedule.xml.gz";
 
     File input = new File(outputNetwork);
@@ -98,7 +98,7 @@ public static void main(String[] args) {
 
     /** (3) Create and set new NetworkRoutes and get Networkroute-Map WD/DW */
     System.out.println("\tCreate NetworkRoutes with linkLists for both directions...");
-    Map<String, NetworkRoute> nwroutes = new NetworkRouteBuilder().build(scenario,links);
+    Map<String, NetworkRoute> nwroutes = new NetworkRouteBuilder().buildnew(scenario,links);
     System.out.println("\t...Done!");
 
     System.out.println(links);
@@ -130,7 +130,7 @@ public static void main(String[] args) {
     System.out.println("\tCreate new TramVehicles and give them new Departures to TransitRoute...");
     for(int i=0; i<(12*9);i++){
     //    int i=1;
-        String vehiclename = NAME + "_" + String.valueOf(1000+i);
+        String vehiclename = NAME + "_" + String.valueOf(0000+i);
 
         VehicleType tram_vtype = scenario.getTransitVehicles().getVehicleTypes().get(Id.create("Tram_veh_type", VehicleType.class));
         VehicleType ride_vtype = scenario.getVehicles().getVehicleTypes().get(Id.create("ride", VehicleType.class));
@@ -168,15 +168,15 @@ public static void main(String[] args) {
         System.out.println(m10DW.getDepartures().get(dep_DW.getId()));
         //tvehicles.put(m10vehicleId,m10vehicle);
     }
-    ReconstructingUmlaufBuilder builder = new ReconstructingUmlaufBuilder(scenario);
-    Collection<Umlauf> umlaufs = builder.build();
-
-    Iterator var1 = umlaufs.iterator();
-    while(var1.hasNext()) {
-        Umlauf umlauf = (Umlauf) var1.next();
-        if(umlauf==null)
-        System.out.println(umlauf.getVehicleId());
-    }
+//    ReconstructingUmlaufBuilder builder = new ReconstructingUmlaufBuilder(scenario);
+//    Collection<Umlauf> umlaufs = builder.build();
+//
+//    Iterator var1 = umlaufs.iterator();
+//    while(var1.hasNext()) {
+//        Umlauf umlauf = (Umlauf) var1.next();
+//        if(umlauf==null)
+//        System.out.println(umlauf.getVehicleId());
+//    }
 
     //System.out.println(umlaufs);
 
