@@ -84,7 +84,7 @@ public class RunTramModifier {
      * */
     /** (2) Create new pt-links and get linkId-Map WD/DW */
     System.out.println("\tCreate and add new pt-links for both directions...");
-    Map<String, List<Id<Link>>> links = new TramNetworkBuilder_2().build(network,nodeList,outputNetwork);
+    Map<String, List<Id<Link>>> links = new TramNetworkBuilder().build(network,nodeList,outputNetwork);
     System.out.println("\t...Done!");
 
         /** (3) Create and set new NetworkRoutes and get Networkroute-Map WD/DW */
@@ -96,7 +96,7 @@ public class RunTramModifier {
         // TO DO: Create new TransitStops if their is no TransitStop with those Coord - name???
         // Here done manually with one stop
         System.out.println("\tCreate/Get all TransitStops and put them into the right order...");
-        Map<String,List<TransitRouteStop>> trstops = new TransitRouteStopBuilder_old().build(nodeList, nodeMap, links, tschedule);
+        Map<String,List<TransitRouteStop>> trstops = new TransitRouteStopBuilder().build(nodeList, nodeMap, links, tschedule);
         System.out.println("\t...Done!");
 
         /** (5) Define new TransitRoutes with informations from (3), (4), given names */
