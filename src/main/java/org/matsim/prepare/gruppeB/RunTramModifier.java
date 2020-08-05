@@ -89,7 +89,7 @@ public class RunTramModifier {
 
         /** (3) Create and set new NetworkRoutes and get Networkroute-Map WD/DW */
         System.out.println("\tCreate NetworkRoutes with linkLists for both directions...");
-        Map<String, NetworkRoute> nwroutes = new NetworkRouteBuilder().build(scenario,links);
+        Map<String, NetworkRoute> nwroutes = new NetworkRouteBuilder().buildnew(scenario,links);
         System.out.println("\t...Done!");
 
         /** (4) Get (and create non-existing) TransitRouteStops and get TransitRouteStop-Map WD/DW */
@@ -189,6 +189,7 @@ public class RunTramModifier {
         Map<String, List<Id<Link>>> links = new TramNetworkBuilder().build(network,nodeList,outputNetwork);
         System.out.println("\t...Done!");
 
+
         /** (3) Get (and create non-existing) TransitRouteStops and get TransitRouteStop-Map WD/DW */
         // Idea: Create new TransitStops if their is no TransitStop with those Coord - name???
         Map<String,List<TransitRouteStop>> trstops = new TransitRouteStopBuilder().build(nodeList, nodeMap, links, tschedule);
@@ -211,15 +212,21 @@ public class RunTramModifier {
         //Variablen deklarieren damit Schleife übersichtlich bleibt
 
         List<Id<Link>> newlinkidsDW = new ArrayList<>();            // todo: über schon existierende links.get("..").get(x) lösen? ab hier existieren nun 2 doppelte link-listen
-        newlinkidsDW.add(links.get("DW").get(1));
-        newlinkidsDW.add(links.get("DW").get(2));
-        newlinkidsDW.add(links.get("DW").get(3));
-        newlinkidsDW.add(links.get("DW").get(4));
+        int end = links.get("DW").size()-1;
+
+        newlinkidsDW.addAll(links.get("DW").subList(1,end+1));
+//        newlinkidsDW.add(links.get("DW").get(1));
+//        newlinkidsDW.add(links.get("DW").get(2));
+//        newlinkidsDW.add(links.get("DW").get(3));
+//        newlinkidsDW.add(links.get("DW").get(4));
+        System.out.println(newlinkidsDW);
 
         List<Id<Link>> newlinkidsWD = new ArrayList<>();
-        newlinkidsWD.add(links.get("WD").get(1));
-        newlinkidsWD.add(links.get("WD").get(2));
-        newlinkidsWD.add(links.get("WD").get(3));
+        newlinkidsWD.addAll(links.get("WD").subList(1,end));
+//        newlinkidsWD.add(links.get("WD").get(1));
+//        newlinkidsWD.add(links.get("WD").get(2));
+//        newlinkidsWD.add(links.get("WD").get(3));
+        System.out.println(newlinkidsWD);
 
         for (Id<TransitRoute> id:tramM10routeid) {
             //Alte infos abspeichern
@@ -254,28 +261,28 @@ public class RunTramModifier {
             //Das wäre die Richtung von Lüneburger über Warschauer nach Hermannplatz
             if (oldendlinkid.equals(Id.createLinkId("pt_38360"))) {
                 newroute.setStartLinkId(oldstartlinkid);
-                newroute.setEndLinkId(links.get("WD").get(4));
+                newroute.setEndLinkId(links.get("WD").get(end));    //
                 newlinkIds.addAll(oldlinkids);
                 newlinkIds.add(Id.createLinkId("pt_38360"));        // todo: = oldendlinkid?
                 newlinkIds.addAll(newlinkidsWD);
-                newroute.setLinkIds(oldstartlinkid, newlinkIds, links.get("WD").get(4));
+                newroute.setLinkIds(oldstartlinkid, newlinkIds, links.get("WD").get(end));    //
             }
             //Bei den Zeiten überall 4 min als offset drauf!!!
             /**(5.2) route Profile: stop Ref Id, arrivaloffset, departureoffset, awaitDeparture**/
             //Das wäre die Richtung von Hermannplatz über Warschauer nach Lüneburger
             if (oldstoplist.get(0).getStopFacility().getId().equals(Id.create("070301008821", TransitStopFacility.class))) {
-                for(int i=0;i<4;i++) {
+                for(int i=0;i<end;i++) {
                     newstoplist.add(tsfactory.createTransitRouteStop(trstops.get("DW").get(i).getStopFacility(), (60 * i), (60 * i)));
                     newstoplist.get(i).setAwaitDepartureTime(true);
                 }
                 for (int n=0; n<oldstoplist.size(); n++){
                     if (n==0){
-                        newstoplist.add(tsfactory.createTransitRouteStop(trstops.get("DW").get(4).getStopFacility(), oldstoplist.get(n).getDepartureOffset().seconds() + 240, oldstoplist.get(n).getArrivalOffset().seconds() + 240));
-                        newstoplist.get(n + 4).setAwaitDepartureTime(true);
+                        newstoplist.add(tsfactory.createTransitRouteStop(trstops.get("DW").get(end).getStopFacility(), oldstoplist.get(n).getDepartureOffset().seconds() + end*60, oldstoplist.get(n).getArrivalOffset().seconds() + end*60));
+                        newstoplist.get(n + end).setAwaitDepartureTime(true);
                     }
                     if (n>0) {
-                        newstoplist.add(tsfactory.createTransitRouteStop(oldstoplist.get(n).getStopFacility(), oldstoplist.get(n).getDepartureOffset().seconds() + 240, oldstoplist.get(n).getArrivalOffset().seconds() + 240));
-                        newstoplist.get(n + 4).setAwaitDepartureTime(true);
+                        newstoplist.add(tsfactory.createTransitRouteStop(oldstoplist.get(n).getStopFacility(), oldstoplist.get(n).getDepartureOffset().seconds() + end*60, oldstoplist.get(n).getArrivalOffset().seconds() + end*60));
+                        newstoplist.get(n + end).setAwaitDepartureTime(true);
                     }
                 }
             }
@@ -285,7 +292,7 @@ public class RunTramModifier {
                 double doffset = oldstoplist.get(nofstops - 1).getDepartureOffset().seconds();
                 double aoffset = oldstoplist.get(nofstops - 1).getArrivalOffset().seconds();
                 newstoplist.addAll(oldstoplist);
-                for(int i=0;i<4;i++) {
+                for(int i=0;i<end;i++) {
                     newstoplist.add(tsfactory.createTransitRouteStop(trstops.get("WD").get(i).getStopFacility(), doffset+(60*(i+1)), aoffset+(60*(i+1))));
                     newstoplist.get(i).setAwaitDepartureTime(true);
                 }
@@ -300,20 +307,37 @@ public class RunTramModifier {
 
             /**(5.3) departures: departure ID, Departure Time, vehicle Ref Id, awaitDeparture**/
             //die Departure Time muss eigentlich nur auf der Strecke H->W->L angepasst werden
-            System.out.println("\tCreate new Departures to new TransitRoute and rewrite TransitSchedule...");
+            System.out.println("\t...Create new Departures, add to new TransitRoute and...");
+            VehiclesFactory tvfactory = scenario.getTransitVehicles().getFactory();
             for (Id<Departure> did:olddepartures.keySet()) {
                 if (oldstartlinkid.equals(Id.createLinkId("pt_38323"))) {
-                    newtransitroute.addDeparture(tsfactory.createDeparture(did, olddepartures.get(did).getDepartureTime()-240));
+                    newtransitroute.addDeparture(tsfactory.createDeparture(did, olddepartures.get(did).getDepartureTime()-end*60));
                     newtransitroute.getDepartures().get(did).setVehicleId(olddepartures.get(did).getVehicleId());
+
+//                    Id<Departure> additionaldep = Id.create(did.toString()+"_copy",Departure.class);
+//                    Id<Vehicle> additionalvehId = Id.createVehicleId(newtransitroute.getDepartures().get(did).getVehicleId().toString()+"_copy");
+//                    Vehicle additionalveh = tvfactory.createVehicle(additionalvehId, scenario.getTransitVehicles().getVehicles().get(newtransitroute.getDepartures().get(did).getVehicleId()).getType());
+//                    scenario.getTransitVehicles().addVehicle(additionalveh);
+//                    newtransitroute.addDeparture(tsfactory.createDeparture(additionaldep, olddepartures.get(did).getDepartureTime()-120));
+//                    newtransitroute.getDepartures().get(additionaldep).setVehicleId(additionalvehId);
+//                    System.out.println(scenario.getTransitVehicles().getVehicles().get(newtransitroute.getDepartures().get(did).getVehicleId()).getType());
                 } else {
                     newtransitroute.addDeparture(tsfactory.createDeparture(did, olddepartures.get(did).getDepartureTime()));
                     newtransitroute.getDepartures().get(did).setVehicleId(olddepartures.get(did).getVehicleId());
+
+//                    Id<Departure> additionaldep = Id.create(did.toString()+"_copy",Departure.class);
+//                    Id<Vehicle> additionalvehId = Id.createVehicleId(newtransitroute.getDepartures().get(did).getVehicleId().toString()+"_copy");
+//                    Vehicle additionalveh = tvfactory.createVehicle(additionalvehId, scenario.getTransitVehicles().getVehicles().get(newtransitroute.getDepartures().get(did).getVehicleId()).getType());
+//                    scenario.getTransitVehicles().addVehicle(additionalveh);
+//                    newtransitroute.addDeparture(tsfactory.createDeparture(additionaldep, olddepartures.get(did).getDepartureTime()+120));
+//                    newtransitroute.getDepartures().get(additionaldep).setVehicleId(additionalvehId);
                 }
             }
+//            System.out.println(newtransitroute.getDepartures());
             //erstelle eine neue transitroute und schreib sie in TransitSchedule
             tschedule.getTransitLines().get(transitLineM10).addRoute(newtransitroute);
         }
-
+        System.out.println("\t...rewrite TransitSchedule...");
         new TransitScheduleWriter(tschedule).writeFile(outputSchedule);
 
         /** (6) Add new extended Route to existing TransitLine, run Validator and write new TransitSchedule */

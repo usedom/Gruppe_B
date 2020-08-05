@@ -22,6 +22,7 @@ public class LoadTramModifiyNodes {
         this.network = network;
         switch(choice){
             case 4: System.out.println("\t\t... for Option 4!"); option4(); break;
+            case 7: System.out.println("\t\t... for Option 7!"); option7(); break;
             default: System.out.println("\t\tERROR! No valid route option!\nNo changes are made!"); optionDefault(); break;
         }
     }
@@ -50,6 +51,20 @@ public class LoadTramModifiyNodes {
             }
             return nodes;
         }
+        if(choice==7) {
+            System.out.println("\t\tGetting Map of Nodes ...");
+            Map<Node, String> nodes = new HashMap<>();
+            for (Node node : inputnodes) {
+//          if(tschedule.getFacilities().get(Id.create(node.getId().toString().substring(3), TransitStopFacility.class)).getName()==""){
+                if (tschedule.getFacilities().get(Id.create(node.getId().toString().substring(3), TransitStopFacility.class))==null) {
+                    nodes.put(node, "Berlin, Neue Haltestelle");
+                } else {
+                    nodes.put(node, tschedule.getFacilities().get(Id.create(node.getId().toString().substring(3), TransitStopFacility.class)).getName());
+                }
+                // System.out.println(nodes);  // for troubleshooting
+            }
+            return nodes;
+        }
         //System.out.println("NAME: "+tschedule.getFacilities().get(Id.create(warschauer_dep.substring(3), TransitStopFacility.class)).getName());
         /*nodes.put(network.getNodes().get(Id.createNodeId(warschauer_dep)),tschedule.getFacilities().get(Id.create(warschauer_dep.substring(3), TransitStopFacility.class)).getName());
         nodes.put(network.getNodes().get(Id.createNodeId(warschauer_arr)),tschedule.getFacilities().get(Id.create(warschauer_arr.substring(3), TransitStopFacility.class)).getName());
@@ -67,10 +82,29 @@ public class LoadTramModifiyNodes {
     /** Extension, Option 4 */
     // List of relevant nodes
     void option4() {
-        String[] nodestrings = {"pt_070301008821", "pt_070301008819", "pt_070101001365", "pt_07010100newpark", "pt_070101003213", "pt_070101004244"}; // individual implementation
+        //String[] nodestrings = {"pt_070301008821", "pt_070301008819", "pt_070101001365", "pt_07010100newpark", "pt_070101003213", "pt_070101004244"}; // individual implementation with Hermannplatz/Sonnenallee
+        String[] nodestrings = {"pt_070301008821", "pt_070301008819", "pt_070101001365", "pt_07010100newpark", "pt_070101003213", "pt_070201074802"}; // individual implementation with U Hermannplatz (U7 to Spandau)
         System.out.println("\t\t\tThese are your nodes:");
         for(String onenode:nodestrings){
+            if(!network.getNodes().containsKey(Id.createNodeId(onenode))){
+                Node node = NetworkUtils.createAndAddNode(network, Id.createNodeId(onenode), new Coord(4597874.123, 5819049.123)); // individual implementation
+                inputnodes.add(node);
+                System.out.println("\t\t\t"+node);
+            }
+            else {
+                Node node = network.getNodes().get(Id.createNodeId(onenode));
+                inputnodes.add(node);
+                System.out.println("\t\t\t"+node);
+            }
+        }
+        System.out.println("\t\t\tThese are "+ inputnodes.size()+ " nodes!");
+    }
 
+    void option7() {
+        //String[] nodestrings = {"pt_070301008821", "pt_070301008819", "pt_070101001365", "pt_07010100newpark", "pt_070101003213", "pt_070101004244"}; // individual implementation with Hermannplatz/Sonnenallee
+        String[] nodestrings = {"pt_070301008821", "pt_070301008819", "pt_070101006862", "pt_060190001572", "pt_070101005791", "pt_070101000263", "pt_070101004244"}; // individual implementation with Hermannplatz/Sonnenallee
+        System.out.println("\t\t\tThese are your nodes:");
+        for(String onenode:nodestrings){
             if(!network.getNodes().containsKey(Id.createNodeId(onenode))){
                 Node node = NetworkUtils.createAndAddNode(network, Id.createNodeId(onenode), new Coord(4597874.123, 5819049.123)); // individual implementation
                 inputnodes.add(node);

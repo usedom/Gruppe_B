@@ -16,6 +16,10 @@ import java.util.Map;
 
 public class TramNetworkBuilder {
 
+    // Set desired parameters
+    final static double FREESPEED = 11.111111111;
+    final static double CAPACITY = 100000.;
+
     Map<String, List<Id<Link>>> NWLinks = new HashMap<>();
 
     Map<String, List<Id<Link>>> getNWLinks(){
@@ -49,24 +53,24 @@ public class TramNetworkBuilder {
             if(i==0) {
                 // linkWD(0) connects Warschauer Str (...19, node 1) with Warschauer Str (...19, node 1)
                 NetworkUtils.createAndAddLink(network, m10links_WD.get(i), nodeList.get(i + 1), nodeList.get(i + 1),
-                       100, 8.333333, 100000., 1.).setAllowedModes(CollectionUtils.stringToSet("pt"));
+                       100, FREESPEED, CAPACITY, 1.).setAllowedModes(CollectionUtils.stringToSet("pt"));
                 // linkDW(4) connects Falckensteinstr. (...65, node 2) with Warschauer Str (...21, node 0)
                 NetworkUtils.createAndAddLink(network, m10links_DW.get(lsize - i - 1), nodeList.get(i + 2), nodeList.get(i),
-                       getDistance(nodeList.get(i+2), nodeList.get(i)), 8.333333, 100000., 1.).setAllowedModes(CollectionUtils.stringToSet("pt"));
+                       getDistance(nodeList.get(i+2), nodeList.get(i)), FREESPEED, CAPACITY, 1.).setAllowedModes(CollectionUtils.stringToSet("pt"));
                 continue;
             }
             else{
                 NetworkUtils.createAndAddLink(network, m10links_WD.get(i), nodeList.get(i), nodeList.get(i + 1),
-                       getDistance(nodeList.get(i),nodeList.get(i+1)), 8.333333, 100000., 1.).setAllowedModes(CollectionUtils.stringToSet("pt"));
+                       getDistance(nodeList.get(i),nodeList.get(i+1)), FREESPEED, CAPACITY, 1.).setAllowedModes(CollectionUtils.stringToSet("pt"));
             }
-            if(i!=4) {
+            if(i!=lsize-1) {
                 NetworkUtils.createAndAddLink(network, m10links_DW.get(lsize - i - 1), nodeList.get(i + 2), nodeList.get(i + 1),
-                       getDistance(nodeList.get(i + 2), nodeList.get(i + 1)), 8.333333, 100000., 1.).setAllowedModes(CollectionUtils.stringToSet("pt"));
+                       getDistance(nodeList.get(i + 2), nodeList.get(i + 1)), FREESPEED, CAPACITY, 1.).setAllowedModes(CollectionUtils.stringToSet("pt"));
             }
             // linkDW(0) must get from Hermannplatz (node 5) to Hermannplatz (node 5)
             else{
-                NetworkUtils.createAndAddLink(network, m10links_DW.get(lsize - i - 1), nodeList.get(5), nodeList.get(5),
-                        100, 8.333333, 100000., 1.).setAllowedModes(CollectionUtils.stringToSet("pt"));
+                NetworkUtils.createAndAddLink(network, m10links_DW.get(lsize - i - 1), nodeList.get(nsize-1), nodeList.get(nsize-1),
+                        100, FREESPEED, CAPACITY, 1.).setAllowedModes(CollectionUtils.stringToSet("pt"));
             }
         }
 
@@ -98,7 +102,7 @@ public class TramNetworkBuilder {
        // sqrt-distance + 10% extra to be safe
        System.out.println("x: " + x_dist);
        System.out.println("y: " + y_dist);
-       double dist = Math.sqrt((x_dist * x_dist) + (y_dist * y_dist)) * 1.1;
+       double dist = Math.sqrt((x_dist * x_dist) + (y_dist * y_dist)); // * 1.1;
        System.out.println(dist);
 
        return dist;

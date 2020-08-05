@@ -22,11 +22,12 @@ public class ExtendedRunModalShapeAnalyser {
 
         // Uncomment line below to printout your root folder
         System.out.println(System.getProperty("user.dir"));
-         String configFile = "outputs/output_100ext/berlin-v5.5-1pct.output_config.xml";
-        String ModalsplitTxt = "gruppeB_TXSandCSV/ForMarcelWithOutNsxtMode.txt";
-        String personGroupTxt = "gruppeB_TXSandCSV/PersonGroupAll.txt";
+
+        String configFile = "outputs/output_100ori/berlin-v5.5-1pct.output_config.xml";
+        String ModalsplitTxt = "gruppeB_HW2results/ModalSplitLOR.txt";
+        String personGroupTxt = "gruppeB_HW2results/PersonGroupAll.txt";
         String shapeFile = "scenarios/berlin-v5.5-1pct/input/LOR_new.shp";
-        int[] shapeIDs = { 60, 65, 61, 66, 53, 55, 54, 287, 289, 283, 280, 51};
+        int[] shapeIDs = {60, 65, 61, 66, 53, 55, 54, 287, 289, 283, 280, 51};
 
 
         Config config = ConfigUtils.loadConfig(configFile);
@@ -73,7 +74,7 @@ public class ExtendedRunModalShapeAnalyser {
 
         System.out.println("Population: " + personsAlongM10.size());
 
-        output = shapesZoneAnalyzer.modalSplitInZone(personsAlongM10,true,true, true, personGroupTxt);
+        output = shapesZoneAnalyzer.modalSplitInZone(personsAlongM10,true,true,true, personGroupTxt);
 
 
         try {
