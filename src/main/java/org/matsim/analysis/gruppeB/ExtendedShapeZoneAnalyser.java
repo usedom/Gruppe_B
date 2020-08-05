@@ -87,23 +87,6 @@ public class ExtendedShapeZoneAnalyser {
 
         }
         return zonepersons;
-        /*
-        PopulationReader populationReader = new PopulationReader(scenario);
-        ActivityFacilities aFacilities = scenario.getActivityFacilities();
-        TreeMap<Id<ActivityFacility>, ActivityFacility> activitytree = aFacilities.getFacilitiesForActivityType("home");
-        int counter=0;
-        for(Id<ActivityFacility> af_id:activitytree.keySet()){
-            Coord af_coord = activitytree.get(af_id).getCoord();
-            double af_x = af_coord.getX(), af_y = af_coord.getY();
-            if(x1 <= af_x && af_x <= x2){
-                if(y1 <= af_y && af_y <= y2){
-                    System.out.println("Found one home! Coord: "+af_coord);
-                    counter++;
-                }
-            }
-        }
-        System.out.println("total: "+counter);
-        */
     }
 
     public String modalSplitInZone(Map<Id<Person>, List<Activity>> input, boolean firstActivity, boolean lastActivity, boolean withinActivity, String personIDFile) {
@@ -155,14 +138,14 @@ public class ExtendedShapeZoneAnalyser {
                                 modalsplit.put(nextmode, modalsplit.get(nextmode) + 1);
                                 legsAlreadyAnalysed.add(personsLegsList.get(1));
                                 personIDs += "\n" + id;
-                                // continue;
+                                 continue;
 
                                 // code is executed when the next activity is a regular activity, meaning that persons walks or cycles
                             } else {
                                 modalsplit.put(mode, modalsplit.get(mode) + 1);
                                 legsAlreadyAnalysed.add(personsLegsList.get(0));
                                 personIDs += "\n" + id;
-                                //continue;
+                                continue;
 
                             }
 
@@ -188,7 +171,7 @@ public class ExtendedShapeZoneAnalyser {
                                 legsAlreadyAnalysed.add(personsLegsList.get(legListSize - 2));
                                 total_count++;
                                 personIDs += "\n" + id;
-                                //             continue;
+                                 continue;
 
                                 // if previousActivity is regular, the last leg is analysed
                             } else if (!previousActivity.toString().contains("interaction") && !legsAlreadyAnalysed.contains(personsLegsList.get(legListSize - 1))) {
@@ -196,7 +179,7 @@ public class ExtendedShapeZoneAnalyser {
                                 legsAlreadyAnalysed.add(personsLegsList.get(legListSize - 1));
                                 total_count++;
                                 personIDs += "\n" + id;
-                                //      continue;
+                                continue;
 
 
                             }
@@ -300,12 +283,9 @@ public class ExtendedShapeZoneAnalyser {
                         }
 
                     }
-                    // }
-                    //  }
-
-                    System.out.println("Legs counted: " + legsAlreadyAnalysed.size());
-                    System.out.println(legsAlreadyAnalysed);
                 }
+                System.out.println("Legs counted: " + legsAlreadyAnalysed.size());
+                System.out.println(legsAlreadyAnalysed);
             }
 
         }
@@ -331,10 +311,6 @@ public class ExtendedShapeZoneAnalyser {
             throw new RuntimeException(ee);
         }
 
-
-
         return output;
-
-
     }
 }
